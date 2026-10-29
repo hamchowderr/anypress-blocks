@@ -40,16 +40,18 @@
 }
 .wp-block-anypress-popup.wp-block-anypress-popup.is-position-bottom-left[open] { inset: auto auto 1rem 1rem; }
 
+/* The close button floats in the top corner, so the first lines of text wrap around it instead of running under it,
+   and it stays in view (sticky) when a long popup scrolls. */
 .wp-block-anypress-popup__close {
-	position: absolute;
-	top: 0.5rem;
-	right: 0.5rem;
+	position: sticky;
+	top: 0;
+	float: right;
 	z-index: 1;
+	margin: calc(0.5rem - var(--wp--preset--spacing--large, 2.5rem)) calc(0.5rem - var(--wp--preset--spacing--medium, 2rem)) 0.25rem 0.5rem !important;
 	display: grid;
 	place-items: center;
 	width: 2.75rem;
 	height: 2.75rem;
-	margin: 0;
 	padding: 0;
 	border: 0;
 	border-radius: 50%;

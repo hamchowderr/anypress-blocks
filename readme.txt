@@ -4,7 +4,7 @@ Tags: popup, modal, newsletter, blocks, block editor
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.1.0
+Stable tag: 0.1.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -47,6 +47,9 @@ Yes. Add your form plugin's block or shortcode inside the popup. The form works 
 Add it to the footer template part in the Site Editor.
 
 == Changelog ==
+
+= 0.1.1 =
+* Fix: on phones the Popup's close button no longer covers the first line of text; it floats in the corner and stays in view when a long popup scrolls.
 
 = 0.1.0 =
 * New: Popup block. Opens after a delay, on scroll, when leaving the page or from a link; closes with its button, Escape or a click outside; remembers when a visitor closed it.
