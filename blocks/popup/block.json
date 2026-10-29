@@ -1,0 +1,128 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "anypress/popup",
+	"version": "0.1.0",
+	"title": "Popup",
+	"category": "design",
+	"description": "A box that opens over the page: after a few seconds, when the visitor scrolls or is about to leave, or when they click a link to it. Put any blocks inside, such as a heading, an image and a signup form.",
+	"keywords": [
+		"popup",
+		"modal",
+		"newsletter",
+		"offer",
+		"dialog",
+		"lightbox"
+	],
+	"textdomain": "anypress-blocks",
+	"attributes": {
+		"popupId": {
+			"type": "string",
+			"default": ""
+		},
+		"label": {
+			"type": "string",
+			"default": ""
+		},
+		"trigger": {
+			"type": "string",
+			"enum": [
+				"delay",
+				"scroll",
+				"exit",
+				"click"
+			],
+			"default": "delay"
+		},
+		"delay": {
+			"type": "number",
+			"default": 5
+		},
+		"scroll": {
+			"type": "number",
+			"default": 50
+		},
+		"showAgainDays": {
+			"type": "number",
+			"default": 7
+		},
+		"size": {
+			"type": "string",
+			"enum": [
+				"small",
+				"medium",
+				"large"
+			],
+			"default": "medium"
+		},
+		"position": {
+			"type": "string",
+			"enum": [
+				"center",
+				"bottom-right",
+				"bottom-left"
+			],
+			"default": "center"
+		}
+	},
+	"supports": {
+		"html": false,
+		"multiple": true,
+		"color": {
+			"background": true,
+			"text": true,
+			"link": true,
+			"__experimentalDefaultControls": {
+				"background": true,
+				"text": true
+			}
+		},
+		"spacing": {
+			"padding": true,
+			"blockGap": true
+		},
+		"__experimentalBorder": {
+			"radius": true,
+			"color": true,
+			"width": true,
+			"style": true
+		},
+		"shadow": true,
+		"layout": {
+			"default": {
+				"type": "flow"
+			},
+			"allowSwitching": false,
+			"allowInheriting": false
+		},
+		"typography": {
+			"fontSize": true
+		}
+	},
+	"example": {
+		"attributes": {
+			"trigger": "delay",
+			"delay": 3
+		},
+		"innerBlocks": [
+			{
+				"name": "core/heading",
+				"attributes": {
+					"content": "Get 10% off your first order",
+					"level": 2
+				}
+			},
+			{
+				"name": "core/paragraph",
+				"attributes": {
+					"content": "Join the list for offers and news. One email a month."
+				}
+			}
+		]
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./editor.css",
+	"style": "file:./style.css",
+	"viewScriptModule": "file:./view.js",
+	"render": "file:./render.php"
+}

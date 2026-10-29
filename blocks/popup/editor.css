@@ -1,0 +1,29 @@
+/* In the editor the popup sits in the page as a framed box, so its blocks can be edited where they are. */
+.wp-block-anypress-popup.is-editor-preview {
+	position: relative;
+	box-sizing: border-box;
+	max-width: var(--anypress-popup-width, 34rem);
+	margin: 3rem auto;
+	padding: var(--wp--preset--spacing--large, 2.5rem) var(--wp--preset--spacing--medium, 2rem);
+	border-radius: var(--wp--preset--border-radius--lg, 1rem);
+	background-color: var(--wp--preset--color--base, #fff);
+	color: var(--wp--preset--color--main, #111);
+	box-shadow: var(--wp--preset--shadow--large-light, 0 30px 60px rgb(0 0 0 / 0.2));
+	outline: 1px dashed color-mix(in srgb, currentColor 40%, transparent);
+	outline-offset: 0.5rem;
+}
+.wp-block-anypress-popup.is-editor-preview.is-size-small { --anypress-popup-width: 24rem; }
+.wp-block-anypress-popup.is-editor-preview.is-size-large { --anypress-popup-width: 50rem; }
+
+.wp-block-anypress-popup.is-editor-preview::before {
+	content: attr(data-popup-summary);
+	position: absolute;
+	bottom: calc(100% + 0.75rem);
+	left: 0;
+	font-size: 0.75rem;
+	font-family: system-ui, sans-serif;
+	line-height: 1.4;
+	opacity: 0.7;
+	white-space: nowrap;
+	color: var(--wp--preset--color--main, #111);
+}
