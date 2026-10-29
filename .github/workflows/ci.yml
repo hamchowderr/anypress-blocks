@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  blocks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          tools: none
+      - name: PHP syntax (7.4, the lowest version the plugin supports)
+        run: find . -name '*.php' -not -path './tests/node_modules/*' -print0 | xargs -0 -n1 php -l > /dev/null
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: tests/package-lock.json
+      - name: Install the checks
+        working-directory: tests
+        run: |
+          npm ci
+          npm install --no-save playwright@1.64.1
+          npx playwright install --with-deps chromium
+      - name: Blocks check on WordPress Playground
+        working-directory: tests
+        run: npm run check
+      - name: Build the zip
+        run: bin/build-zip.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: anypress-blocks
+          path: |
+            dist/anypress-blocks.zip
+            tests/shots/

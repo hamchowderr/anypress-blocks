@@ -1,0 +1,57 @@
+# Builds the plugin zip and attaches it, with its checksum, to a GitHub release v<version>.
+# Runs when a v<version> tag is pushed, or from the Actions tab (or the API) with a version, which tags the
+# current main. The version must match the plugin header and readme.txt.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Plugin version, e.g. 0.1.0 (must match the plugin header; the tag is v<version>)
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          VERSION=${INPUT_VERSION:-${GITHUB_REF_NAME#v}}
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "version must look like 0.1.0"; exit 1; }
+          PLUGIN_VERSION=$(sed -n 's/^ \* Version: *//p' anypress-blocks.php | head -1)
+          [ "$VERSION" = "$PLUGIN_VERSION" ] || { echo "v$VERSION does not match the plugin header Version $PLUGIN_VERSION"; exit 1; }
+          grep -q "define( 'ANYPRESS_BLOCKS_VERSION', '$VERSION' );" anypress-blocks.php || { echo "ANYPRESS_BLOCKS_VERSION is not $VERSION"; exit 1; }
+          if gh release view "v$VERSION" >/dev/null 2>&1; then echo "v$VERSION is already released"; exit 1; fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: tests/package-lock.json
+      - name: Blocks check on WordPress Playground
+        working-directory: tests
+        run: |
+          npm ci
+          npm install --no-save playwright@1.64.1
+          npx playwright install --with-deps chromium
+          npm run check
+      - name: Build the zip
+        run: bin/build-zip.sh
+      - name: Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          awk -v v="= $VERSION =" '$0==v{on=1;next} on&&/^= /{exit} on' readme.txt > notes.md
+          printf '\nInstall: Plugins > Add New > Upload Plugin, and choose anypress-blocks.zip.\n\nSHA-256: `%s`\n' "$(cut -d' ' -f1 dist/SHA256SUMS)" >> notes.md
+          gh release create "v$VERSION" dist/anypress-blocks.zip dist/SHA256SUMS \
+            --target "$GITHUB_SHA" --title "AnyPress Blocks $VERSION" --notes-file notes.md
