@@ -203,11 +203,16 @@ try {
     const fit = await ptab.evaluate(() => {
         const d = document.getElementById('signup').getBoundingClientRect();
         const c = document.querySelector('#signup .wp-block-anypress-popup__close').getBoundingClientRect();
-        return { left: d.left, right: innerWidth - d.right, scroll: document.documentElement.scrollWidth - innerWidth, close: Math.min(c.width, c.height), open: document.getElementById('signup').open };
+        // Text in the popup must not run under the close button.
+        const range = document.createRange();
+        range.selectNodeContents(document.querySelector('#signup h2'));
+        const covered = [...range.getClientRects()].some((r) => r.left < c.right && r.right > c.left && r.top < c.bottom && r.bottom > c.top);
+        return { left: d.left, right: innerWidth - d.right, scroll: document.documentElement.scrollWidth - innerWidth, close: Math.min(c.width, c.height), covered, open: document.getElementById('signup').open };
     });
     check(fit.open, 'phone: opens after the delay');
     check(fit.left >= 8 && fit.right >= 8 && fit.scroll <= 0, 'phone: fits the screen with nothing running off the side', JSON.stringify(fit));
     check(fit.close >= 44, 'phone: the close button is at least 44 px', String(fit.close));
+    check(!fit.covered, 'phone: the close button does not cover the heading');
     await ptab.screenshot({ path: resolve(SHOTS, 'popup-phone.png') });
     await phone.close();
 
