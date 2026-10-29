@@ -1,0 +1,99 @@
+/* Carousel block. Slides sit side by side in a track that scrolls sideways and snaps to each slide; phones show one
+   slide with the edge of the next, tablets up to two. Colours come from the theme's presets with plain fallbacks. */
+.wp-block-anypress-carousel {
+	--anypress-carousel-gap: var(--wp--preset--spacing--medium, 1.5rem);
+	--anypress-carousel-shown: var(--anypress-carousel-per-view, 3);
+	position: relative;
+}
+
+.wp-block-anypress-carousel__track {
+	display: grid;
+	grid-auto-flow: column;
+	grid-auto-columns: calc((100% - (var(--anypress-carousel-shown) - 1) * var(--anypress-carousel-gap)) / var(--anypress-carousel-shown));
+	gap: var(--anypress-carousel-gap);
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: none;
+	padding-block: 0.25rem;
+}
+.wp-block-anypress-carousel__track::-webkit-scrollbar { display: none; }
+.wp-block-anypress-carousel__track:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+
+.wp-block-anypress-carousel__track > * {
+	scroll-snap-align: start;
+	margin: 0 !important;
+	min-width: 0;
+}
+
+@media (max-width: 781px) {
+	.wp-block-anypress-carousel { --anypress-carousel-shown: min(2, var(--anypress-carousel-per-view, 3)); }
+}
+@media (max-width: 599px) {
+	.wp-block-anypress-carousel { --anypress-carousel-shown: 1.15; }
+	.wp-block-anypress-carousel.has-1-per-view { --anypress-carousel-shown: 1; }
+}
+
+.wp-block-anypress-carousel__nav {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-top: var(--wp--preset--spacing--small, 1rem);
+}
+
+.wp-block-anypress-carousel__dots {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem;
+	margin-right: auto;
+}
+
+.wp-block-anypress-carousel__dot {
+	display: grid;
+	place-items: center;
+	width: 1.75rem;
+	height: 1.75rem;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+}
+.wp-block-anypress-carousel__dot::before {
+	content: "";
+	width: 0.6rem;
+	height: 0.6rem;
+	border-radius: 50%;
+	background: currentColor;
+	opacity: 0.3;
+	transition: opacity 0.2s, transform 0.2s;
+}
+.wp-block-anypress-carousel__dot[aria-current="true"]::before { opacity: 1; transform: scale(1.25); }
+
+.wp-block-anypress-carousel__prev,
+.wp-block-anypress-carousel__next {
+	display: grid;
+	place-items: center;
+	width: 2.75rem;
+	height: 2.75rem;
+	padding: 0;
+	border: 2px solid currentColor;
+	border-radius: var(--wp--preset--border-radius--full, 999px);
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+}
+.wp-block-anypress-carousel__prev { margin-left: auto; }
+.wp-block-anypress-carousel__dots + .wp-block-anypress-carousel__prev { margin-left: 0; }
+.wp-block-anypress-carousel__prev:hover,
+.wp-block-anypress-carousel__next:hover { background: color-mix(in srgb, currentColor 10%, transparent); }
+.wp-block-anypress-carousel__prev:disabled,
+.wp-block-anypress-carousel__next:disabled { opacity: 0.35; cursor: default; background: transparent; }
+.wp-block-anypress-carousel__dot:focus-visible,
+.wp-block-anypress-carousel__prev:focus-visible,
+.wp-block-anypress-carousel__next:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+
+@media (prefers-reduced-motion: no-preference) {
+	.wp-block-anypress-carousel__track { scroll-behavior: smooth; }
+}
+.wp-block-anypress-carousel.is-static .wp-block-anypress-carousel__nav { display: none; }

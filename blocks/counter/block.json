@@ -1,0 +1,70 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "anypress/counter",
+	"version": "0.2.0",
+	"title": "Counter",
+	"category": "design",
+	"description": "A big number that counts up when it scrolls into view, such as years in business, jobs done or happy customers. Put a short label under it.",
+	"keywords": [
+		"counter",
+		"number",
+		"count up",
+		"statistic",
+		"stats",
+		"figures"
+	],
+	"textdomain": "anypress-blocks",
+	"attributes": {
+		"number": {
+			"type": "number",
+			"default": 100
+		},
+		"decimals": {
+			"type": "number",
+			"default": 0
+		},
+		"prefix": {
+			"type": "string",
+			"default": ""
+		},
+		"suffix": {
+			"type": "string",
+			"default": ""
+		},
+		"duration": {
+			"type": "number",
+			"default": 2
+		}
+	},
+	"supports": {
+		"html": false,
+		"color": {
+			"text": true,
+			"background": false
+		},
+		"spacing": {
+			"margin": true
+		},
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true,
+			"textAlign": true,
+			"__experimentalFontFamily": true,
+			"__experimentalFontWeight": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true
+			}
+		}
+	},
+	"example": {
+		"attributes": {
+			"number": 2400,
+			"suffix": "+"
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style.css",
+	"viewScriptModule": "file:./view.js",
+	"render": "file:./render.php"
+}

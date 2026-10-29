@@ -1,0 +1,84 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "anypress/map",
+	"version": "0.2.0",
+	"title": "Map",
+	"category": "embed",
+	"description": "A map of an address from OpenStreetMap, with a pin and a link for directions. No account or API key needed.",
+	"keywords": [
+		"map",
+		"location",
+		"address",
+		"directions",
+		"openstreetmap",
+		"service area"
+	],
+	"textdomain": "anypress-blocks",
+	"attributes": {
+		"address": {
+			"type": "string",
+			"default": ""
+		},
+		"lat": {
+			"type": "number"
+		},
+		"lon": {
+			"type": "number"
+		},
+		"zoom": {
+			"type": "number",
+			"default": 14
+		},
+		"aspect": {
+			"type": "string",
+			"enum": [
+				"16/9",
+				"4/3",
+				"1/1",
+				"21/9"
+			],
+			"default": "16/9"
+		},
+		"directions": {
+			"type": "boolean",
+			"default": true
+		},
+		"askFirst": {
+			"type": "boolean",
+			"default": false
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [
+			"wide",
+			"full"
+		],
+		"spacing": {
+			"margin": [
+				"top",
+				"bottom"
+			]
+		},
+		"__experimentalBorder": {
+			"radius": true,
+			"color": true,
+			"width": true,
+			"style": true
+		},
+		"shadow": true
+	},
+	"example": {
+		"attributes": {
+			"address": "Springfield, Illinois",
+			"lat": 39.7817,
+			"lon": -89.6501
+		}
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./editor.css",
+	"style": "file:./style.css",
+	"viewScriptModule": "file:./view.js",
+	"render": "file:./render.php"
+}
