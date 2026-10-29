@@ -1,0 +1,97 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "anypress/carousel",
+	"version": "0.2.0",
+	"title": "Carousel",
+	"category": "design",
+	"description": "Slides that scroll sideways, with arrows and dots: reviews, projects, team members or photos. Each block inside is one slide.",
+	"keywords": [
+		"carousel",
+		"slider",
+		"slideshow",
+		"reviews",
+		"testimonials",
+		"gallery"
+	],
+	"textdomain": "anypress-blocks",
+	"attributes": {
+		"perView": {
+			"type": "number",
+			"default": 3
+		},
+		"autoplay": {
+			"type": "number",
+			"default": 0
+		},
+		"arrows": {
+			"type": "boolean",
+			"default": true
+		},
+		"dots": {
+			"type": "boolean",
+			"default": true
+		},
+		"label": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [
+			"wide",
+			"full"
+		],
+		"color": {
+			"text": true,
+			"background": false
+		},
+		"spacing": {
+			"margin": [
+				"top",
+				"bottom"
+			]
+		}
+	},
+	"example": {
+		"attributes": {
+			"perView": 2
+		},
+		"innerBlocks": [
+			{
+				"name": "core/quote",
+				"innerBlocks": [
+					{
+						"name": "core/paragraph",
+						"attributes": {
+							"content": "Booked on Monday, fixed on Tuesday, and the price did not change."
+						}
+					}
+				],
+				"attributes": {
+					"citation": "Jo M., Riverside"
+				}
+			},
+			{
+				"name": "core/quote",
+				"innerBlocks": [
+					{
+						"name": "core/paragraph",
+						"attributes": {
+							"content": "Tidy, polite and they explained every step in plain words."
+						}
+					}
+				],
+				"attributes": {
+					"citation": "Carlos T., Oak Hill"
+				}
+			}
+		]
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./editor.css",
+	"style": "file:./style.css",
+	"viewScriptModule": "file:./view.js",
+	"render": "file:./render.php"
+}

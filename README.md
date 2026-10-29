@@ -1,12 +1,15 @@
 # AnyPress Blocks
 
-Interactive blocks for any WordPress block theme. AnyPress stores have it installed, and any WordPress site can use it.
+Interactive blocks for any WordPress block theme: Popup, Carousel, Counter and Map. AnyPress stores have it installed, and any WordPress site can use it.
 
 ## Blocks
 
 | Block | What it does |
 |---|---|
 | **Popup** (`anypress/popup`) | A box that opens over the page after a few seconds, when the visitor scrolls, when they are about to leave, or from any link to `#its-id`. Holds any blocks, including a form. Closes with its button, Escape or a click outside, and stays closed for the number of days you choose. |
+| **Carousel** (`anypress/carousel`) | Slides that scroll sideways: reviews, projects, team or photos. Each block inside is one slide. One to four at a time on a computer, one and the edge of the next on a phone. Arrows, dots, swipe, arrow keys and optional autoplay that pauses on hover, touch, focus and reduced motion. |
+| **Counter** (`anypress/counter`) | A number that counts up when it scrolls into view, with text before or after it. The page holds the final number, so it reads right without JavaScript. |
+| **Map** (`anypress/map`) | An OpenStreetMap map of an address with a pin and a "Get directions" link. No API key. Can wait to load until the visitor asks. |
 
 ## Install
 

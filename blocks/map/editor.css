@@ -1,0 +1,9 @@
+/* In the editor the map is a preview: clicks select the block instead of moving the map. */
+.wp-block-anypress-map iframe { pointer-events: none; }
+.wp-block-anypress-map__empty {
+	display: grid;
+	place-content: center;
+	gap: 0.5rem;
+	padding: 2rem;
+	text-align: center;
+}

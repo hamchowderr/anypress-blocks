@@ -1,0 +1,16 @@
+/* In the editor every slide is shown in a grid, so all of them can be edited without scrolling. */
+.wp-block-anypress-carousel.is-editor-preview {
+	display: grid;
+	grid-template-columns: repeat(var(--anypress-carousel-per-view, 3), minmax(0, 1fr));
+	gap: var(--wp--preset--spacing--medium, 1.5rem);
+}
+.wp-block-anypress-carousel.is-editor-preview > * { margin: 0 !important; min-width: 0; }
+.wp-block-anypress-carousel.is-editor-preview > .block-list-appender { grid-column: 1 / -1; }
+.wp-block-anypress-carousel.is-editor-preview::before {
+	content: attr(data-carousel-summary);
+	grid-column: 1 / -1;
+	font-size: 0.75rem;
+	font-family: system-ui, sans-serif;
+	line-height: 1.4;
+	opacity: 0.7;
+}

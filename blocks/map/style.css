@@ -1,0 +1,34 @@
+/* Map block: the map keeps its shape at any width; corners and border come from the block's settings. */
+.wp-block-anypress-map { margin-inline: 0; overflow: hidden; }
+.wp-block-anypress-map__frame {
+	position: relative;
+	aspect-ratio: var(--anypress-map-aspect, 16/9);
+	background: color-mix(in srgb, currentColor 8%, transparent);
+}
+@media (max-width: 599px) {
+	.wp-block-anypress-map__frame { aspect-ratio: 4/3; }
+}
+.wp-block-anypress-map__frame > iframe {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	border: 0;
+}
+.wp-block-anypress-map__load {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-content: center;
+	gap: 0.25rem;
+	width: 100%;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	font: inherit;
+	font-weight: 600;
+	cursor: pointer;
+}
+.wp-block-anypress-map__load small { font-weight: 400; opacity: 0.75; }
+.wp-block-anypress-map__load:focus-visible { outline: 2px solid currentColor; outline-offset: -4px; }
+.wp-block-anypress-map__caption { margin-top: 0.5rem; }

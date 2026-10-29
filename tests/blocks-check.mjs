@@ -13,6 +13,14 @@
 //   - on a phone it fits the screen, nothing runs off the side, and the close button is a full-size tap target
 //   - no PHP notices or errors
 //
+// Carousel, Counter and Map blocks:
+//   - the carousel shows three slides on a computer and one and the edge of the next on a phone; arrows, dots and the
+//     arrow keys move it, and the arrows turn off at either end
+//   - the counter prints its final number in the page, counts up to it when it scrolls into view, and doesn't count
+//     with reduced motion
+//   - the map embeds OpenStreetMap with a pin, links to directions, and an ask-first map loads only when asked
+//   - all three stay valid in the editor, which shows the counter's number and a map preview
+//
 // Environment: ANYPRESS_THEME_ZIP (theme zip URL, default the latest AnyPress theme release), PLAYGROUND_WP, PLAYGROUND_PHP
 // (default 7.1.3 and 8.3, what stores run), PLAYGROUND_PORT (9420), SHOTS (screenshots folder, default ./shots).
 // Needs Playwright with Chromium.
@@ -104,6 +112,16 @@ const pages = {
     delay: popup({ popupId: 'signup', trigger: 'delay', delay: 2, label: 'Newsletter signup' }, signup) + '\n\n' + button('#signup', 'Join the list') + '\n\n' + filler,
     click: popup({ popupId: 'order', trigger: 'click', size: 'small' }, signup) + '\n\n' + button('#order', 'Order a cake') + '\n\n' + filler,
     scroll: popup({ popupId: 'offer', trigger: 'scroll', scroll: 60, position: 'bottom-right', size: 'small' }, signup) + '\n\n' + filler,
+    blocks: [
+        `<!-- wp:anypress/carousel {"perView":3,"label":"Customer reviews"} -->`,
+        ...['Dana R.', 'Jo M.', 'Carlos T.', 'Priya S.', 'Sam K.'].map((name, i) => `<!-- wp:group {"layout":{"type":"default"}} -->\n<div class="wp-block-group"><!-- wp:paragraph -->\n<p>Review ${i + 1}: on time, tidy and the price did not change.</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:paragraph -->\n<p>${name}</p>\n<!-- /wp:paragraph --></div>\n<!-- /wp:group -->`),
+        `<!-- /wp:anypress/carousel -->`,
+        filler.split('\n\n').slice(0, 6).join('\n\n'),
+        `<!-- wp:anypress/counter {"number":2400,"suffix":"+","duration":1.5,"fontSize":"x-large"} /-->`,
+        `<!-- wp:paragraph -->\n<p>jobs done</p>\n<!-- /wp:paragraph -->`,
+        `<!-- wp:anypress/map {"address":"Springfield, Illinois","lat":39.7817,"lon":-89.6501,"zoom":12} /-->`,
+        `<!-- wp:anypress/map {"address":"Oak Hill","lat":39.79,"lon":-89.61,"askFirst":true,"directions":false,"aspect":"4/3"} /-->`,
+    ].join('\n\n'),
 };
 const ids = await php(`
     $out = [];
@@ -115,7 +133,7 @@ const ids = await php(`
 
 if (SERVE) {
     // Auto-login sends cookie-less requests round in circles, so serving skips the checks.
-    console.log(`Serving ${base} (admin / password): /popup-delay/, /popup-click/, /popup-scroll/. Ctrl+C to stop.`);
+    console.log(`Serving ${base} (admin / password): /popup-delay/, /popup-click/, /popup-scroll/, /popup-blocks/. Ctrl+C to stop.`);
     await new Promise(() => {});
 }
 
@@ -128,6 +146,16 @@ check(/<dialog[^>]*id="signup"[^>]*class="[^"]*wp-block-anypress-popup/.test(htm
 check(html.includes('fluentform') && html.includes('Your email'), 'the Fluent Form renders inside it');
 const viewTag = (html.match(/<script[^>]*anypress-blocks\/blocks\/popup\/view\.js[^>]*>/) || [''])[0];
 check(viewTag.includes('type="module"'), 'loads its view script as a module', viewTag || 'no script tag');
+
+console.log('Carousel, Counter and Map blocks');
+const more = await php(`echo json_encode(array_map(fn($n) => WP_Block_Type_Registry::get_instance()->is_registered($n), ['carousel' => 'anypress/carousel', 'counter' => 'anypress/counter', 'map' => 'anypress/map']));`);
+check(more.carousel && more.counter && more.map, 'anypress/carousel, anypress/counter and anypress/map are registered', JSON.stringify(more));
+const bhtml = await (await fetch(`${base}/popup-blocks/`)).text();
+check(/class="[^"]*wp-block-anypress-carousel[^"]*"[^>]*role="region"/.test(bhtml) && bhtml.includes('aria-label="Customer reviews"'), 'the carousel renders as a named region');
+check(/wp-block-anypress-counter__number">2,400</.test(bhtml), 'the counter prints its final number in the page (for no JavaScript and search engines)');
+check(/<iframe[^>]+openstreetmap\.org\/export\/embed\.html\?bbox=[^"]+marker=39\.7817,-89\.6501/.test(bhtml.replace(/&#038;|&amp;/g, '&')), 'the map embeds OpenStreetMap with a pin at its place');
+check(bhtml.includes('google.com/maps/dir/') && bhtml.includes('Springfield%2C%20Illinois'), 'the map links to directions for its address');
+check(/wp-block-anypress-map__load[^>]+data-src="https:\/\/www\.openstreetmap\.org/.test(bhtml) && (bhtml.match(/<iframe/g) || []).length === 1, 'an ask-first map loads nothing until asked');
 
 let browser;
 try {
@@ -216,6 +244,85 @@ try {
     await ptab.screenshot({ path: resolve(SHOTS, 'popup-phone.png') });
     await phone.close();
 
+    // Carousel, Counter and Map on a computer.
+    const bdesk = await browser.newContext({ viewport: { width: 1280, height: 860 } });
+    const btab = await bdesk.newPage();
+    const berrors = [];
+    btab.on('pageerror', (e) => berrors.push(e.message));
+    await btab.goto(`${base}/popup-blocks/`, { waitUntil: 'domcontentloaded' });
+    await btab.waitForTimeout(500);
+    const car = () => btab.evaluate(() => {
+        const t = document.querySelector('.wp-block-anypress-carousel__track');
+        const s = [...t.children];
+        return { track: t.clientWidth, slide: s[0].getBoundingClientRect().width, left: t.scrollLeft, max: t.scrollWidth - t.clientWidth,
+            dots: document.querySelectorAll('.wp-block-anypress-carousel__dot').length,
+            current: [...document.querySelectorAll('.wp-block-anypress-carousel__dot')].findIndex((d) => d.getAttribute('aria-current') === 'true'),
+            prev: document.querySelector('.wp-block-anypress-carousel__prev').disabled, next: document.querySelector('.wp-block-anypress-carousel__next').disabled,
+            slides: s.map((x) => x.getAttribute('aria-roledescription')) };
+    });
+    let c = await car();
+    check(Math.abs(c.slide * 3 - c.track) < c.track * 0.12, 'carousel: shows three slides at a time on a computer', JSON.stringify(c));
+    check(c.dots === 3 && c.current === 0, 'carousel: one dot per stop (five slides, three shown: three dots)', JSON.stringify(c));
+    check(c.prev && !c.next, 'carousel: at the start the back arrow is off and the next arrow on');
+    check(c.slides.every((x) => x === 'slide'), 'carousel: each slide is labelled as a slide for screen readers');
+    await btab.click('.wp-block-anypress-carousel__next');
+    await btab.waitForTimeout(900);
+    c = await car();
+    check(c.left > 0 && c.current === 1 && !c.prev, 'carousel: the next arrow moves on one slide', JSON.stringify(c));
+    await btab.click('.wp-block-anypress-carousel__dot:last-child');
+    await btab.waitForTimeout(900);
+    c = await car();
+    check(c.left >= c.max - 2 && c.next && c.current === 2, 'carousel: the last dot goes to the end, where the next arrow turns off', JSON.stringify(c));
+    await btab.focus('.wp-block-anypress-carousel__track');
+    await btab.keyboard.press('ArrowLeft');
+    await btab.waitForTimeout(900);
+    check((await car()).left < c.left, 'carousel: the left arrow key moves back');
+    await btab.screenshot({ path: resolve(SHOTS, 'carousel-desktop.png'), clip: { x: 0, y: 0, width: 1280, height: 860 } });
+
+    const counterText = () => btab.$eval('.wp-block-anypress-counter__number', (e) => e.textContent);
+    await btab.$eval('.wp-block-anypress-counter', (e) => e.scrollIntoView({ block: 'center' }));
+    await btab.waitForTimeout(300);
+    const midway = await counterText();
+    await btab.waitForTimeout(1800);
+    const done = await counterText();
+    check(midway !== '2,400' && Number(midway.replace(/\D/g, '')) < 2400, 'counter: counts up when it scrolls into view', midway);
+    check(done === '2,400' && (await btab.$eval('.wp-block-anypress-counter', (e) => e.textContent)) === '2,400+', 'counter: ends on its number with its suffix', done);
+
+    await btab.click('.wp-block-anypress-map__load');
+    await btab.waitForTimeout(300);
+    check((await btab.locator('.wp-block-anypress-map iframe').count()) === 2, 'map: "Show the map" loads an ask-first map');
+    const mapBox = await btab.$eval('.wp-block-anypress-map__frame', (e) => { const r = e.getBoundingClientRect(); return r.width / r.height; });
+    check(Math.abs(mapBox - 16 / 9) < 0.05, 'map: keeps its shape', String(mapBox));
+    check(berrors.length === 0, 'no JavaScript errors from Carousel, Counter or Map', berrors.join('; '));
+    await bdesk.close();
+
+    // Reduced motion: the counter shows its number and does not count.
+    const calm = await browser.newContext({ viewport: { width: 1280, height: 860 }, reducedMotion: 'reduce' });
+    const ctab = await calm.newPage();
+    await ctab.goto(`${base}/popup-blocks/`, { waitUntil: 'domcontentloaded' });
+    await ctab.$eval('.wp-block-anypress-counter', (e) => e.scrollIntoView({ block: 'center' }));
+    await ctab.waitForTimeout(200);
+    check((await ctab.$eval('.wp-block-anypress-counter__number', (e) => e.textContent)) === '2,400', 'counter: with reduced motion it shows the number without counting');
+    await calm.close();
+
+    // Phone: one slide and the edge of the next, nothing off the side.
+    const bphone = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const bptab = await bphone.newPage();
+    await bptab.goto(`${base}/popup-blocks/`, { waitUntil: 'domcontentloaded' });
+    await bptab.waitForTimeout(500);
+    const pc = await bptab.evaluate(() => {
+        const t = document.querySelector('.wp-block-anypress-carousel__track');
+        return { ratio: t.children[0].getBoundingClientRect().width / t.clientWidth, scroll: document.documentElement.scrollWidth - innerWidth,
+            dots: document.querySelectorAll('.wp-block-anypress-carousel__dot').length,
+            arrow: Math.min(...[...document.querySelectorAll('.wp-block-anypress-carousel__next, .wp-block-anypress-carousel__dot')].map((b) => b.getBoundingClientRect().height)) };
+    });
+    check(pc.ratio > 0.8 && pc.ratio < 0.95, 'phone: the carousel shows one slide and the edge of the next', JSON.stringify(pc));
+    check(pc.dots === 5, 'phone: one dot per slide', JSON.stringify(pc));
+    check(pc.scroll <= 0, 'phone: nothing runs off the side of the page', JSON.stringify(pc));
+    check(pc.arrow >= 28, 'phone: arrows and dots are big enough to tap', JSON.stringify(pc));
+    await bptab.screenshot({ path: resolve(SHOTS, 'carousel-phone.png') });
+    await bphone.close();
+
     // Editor: the saved page stays valid.
     const ed = await browser.newContext({ viewport: { width: 1440, height: 900 } });
     const etab = await ed.newPage();
@@ -246,6 +353,30 @@ try {
         return { id: last.attributes.popupId, inner: last.innerBlocks.map((b) => b.name) };
     });
     check(/^popup-[a-z0-9]{8}$/.test(fresh.id) && fresh.inner.join() === 'core/heading,core/paragraph', 'a new popup gets an id and a heading and paragraph to fill in', JSON.stringify(fresh));
+
+    await etab.goto(`${base}/wp-admin/post.php?post=${ids.blocks}&action=edit`);
+    await etab.waitForFunction(() => window.wp?.data?.select('core/block-editor')?.getBlocks().length > 0, null, { timeout: 60000 });
+    await etab.evaluate(() => window.wp.data.dispatch('core/preferences').set('core/edit-post', 'welcomeGuide', false));
+    await etab.waitForTimeout(1500);
+    const bblocks = await etab.evaluate(() => {
+        const walk = (list) => list.flatMap((b) => [{ name: b.name, valid: b.isValid }, ...walk(b.innerBlocks)]);
+        return walk(window.wp.data.select('core/block-editor').getBlocks());
+    });
+    check(['anypress/carousel', 'anypress/counter', 'anypress/map'].every((n) => bblocks.some((b) => b.name === n && b.valid)) && bblocks.every((b) => b.valid),
+        'the editor loads Carousel, Counter and Map as valid blocks', bblocks.filter((b) => !b.valid).map((b) => b.name).join(', '));
+    const shown = await etab.evaluate(() => {
+        const doc = document.querySelector('iframe[name="editor-canvas"]')?.contentDocument || document;
+        return { counter: doc.querySelector('.wp-block-anypress-counter')?.textContent, map: !!doc.querySelector('.wp-block-anypress-map iframe') };
+    });
+    check(shown.counter === '2,400+' && shown.map, 'the editor shows the counter\'s number and a map preview', JSON.stringify(shown));
+    await etab.screenshot({ path: resolve(SHOTS, 'blocks-editor.png') });
+    const freshCar = await etab.evaluate(async () => {
+        window.wp.data.dispatch('core/block-editor').insertBlocks(window.wp.blocks.createBlock('anypress/carousel'));
+        await new Promise((r) => setTimeout(r, 800));
+        const all = window.wp.data.select('core/block-editor').getBlocks().filter((b) => b.name === 'anypress/carousel');
+        return all[all.length - 1].innerBlocks.length;
+    });
+    check(freshCar === 3, 'a new carousel starts with three slides to fill in', String(freshCar));
     await ed.close();
 } catch (e) {
     fail(`browser checks did not finish: ${e.message.split('\n')[0]}`);

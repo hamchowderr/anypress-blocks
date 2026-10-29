@@ -1,0 +1,2 @@
+/* Counter block: digits keep the same width while counting, so the line doesn't jump. */
+.wp-block-anypress-counter { font-variant-numeric: tabular-nums; }

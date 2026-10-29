@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       AnyPress Blocks
  * Plugin URI:        https://anypress.io/blocks
- * Description:       Interactive blocks for any block theme, starting with a Popup: a newsletter signup, an offer or a booking form that opens after a few seconds, when a visitor is about to leave, or from any button.
- * Version:           0.1.1
+ * Description:       Interactive blocks for any block theme: a Popup for signups, offers and booking forms, a Carousel for reviews and projects, a Counter that counts up, and a Map of your address.
+ * Version:           0.2.0
  * Requires at least: 6.5
  * Requires PHP:      7.4
  * Author:            AnyPress
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'ANYPRESS_BLOCKS_VERSION', '0.1.1' );
+define( 'ANYPRESS_BLOCKS_VERSION', '0.2.0' );
 
 /**
  * Registers every block in blocks/ from its block.json.
