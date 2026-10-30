@@ -358,9 +358,14 @@ try {
     const fresh = await etab.evaluate(async () => {
         const { createBlock } = window.wp.blocks;
         window.wp.data.dispatch('core/block-editor').insertBlocks(createBlock('anypress/popup'));
-        await new Promise((r) => setTimeout(r, 800));
-        const all = window.wp.data.select('core/block-editor').getBlocks().filter((b) => b.name === 'anypress/popup');
-        const last = all[all.length - 1];
+        // The block fills in its id and starter blocks once its editor mounts; wait up to 10 seconds for that.
+        let last;
+        for (let i = 0; i < 50; i++) {
+            await new Promise((r) => setTimeout(r, 200));
+            const all = window.wp.data.select('core/block-editor').getBlocks().filter((b) => b.name === 'anypress/popup');
+            last = all[all.length - 1];
+            if (last.attributes.popupId && last.innerBlocks.length) break;
+        }
         return { id: last.attributes.popupId, inner: last.innerBlocks.map((b) => b.name) };
     });
     check(/^popup-[a-z0-9]{8}$/.test(fresh.id) && fresh.inner.join() === 'core/heading,core/paragraph', 'a new popup gets an id and a heading and paragraph to fill in', JSON.stringify(fresh));
@@ -375,6 +380,11 @@ try {
     });
     check(['anypress/carousel', 'anypress/counter', 'anypress/map'].every((n) => bblocks.some((b) => b.name === n && b.valid)) && bblocks.every((b) => b.valid),
         'the editor loads Carousel, Counter and Map as valid blocks', bblocks.filter((b) => !b.valid).map((b) => b.name).join(', '));
+    // The editor canvas renders blocks as they come into view; give the map preview time to appear.
+    await etab.waitForFunction(() => {
+        const doc = document.querySelector('iframe[name="editor-canvas"]')?.contentDocument || document;
+        return !!doc.querySelector('.wp-block-anypress-map iframe');
+    }, null, { timeout: 15000 }).catch(() => {});
     const shown = await etab.evaluate(() => {
         const doc = document.querySelector('iframe[name="editor-canvas"]')?.contentDocument || document;
         return { counter: doc.querySelector('.wp-block-anypress-counter')?.textContent, map: !!doc.querySelector('.wp-block-anypress-map iframe') };
