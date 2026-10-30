@@ -1,10 +1,10 @@
 # AnyPress Blocks: agent guide
 
-A WordPress plugin of interactive blocks, installed on every AnyPress store and free for any WordPress site. Each block lives in `blocks/<name>/` (`block.json`, `index.js` for the editor, `render.php`, `view.js` for the page, `style.css`, `editor.css`); `anypress-blocks.php` registers every folder. `tests/` holds the Playground check; `bin/build-zip.sh` builds the release zip.
+A WordPress plugin of interactive blocks, installed on every AnyPress store and free for any WordPress site. Each block lives in `blocks/<name>/` (`block.json`, `index.js` for the editor, `render.php`, `view.js` for the page, `style.css`, `editor.css`); `anypress-blocks.php` registers them all from `blocks-manifest.php` (run `php bin/build-manifest.php` after changing a `block.json`; CI checks it). `tests/` holds the Playground check; `bin/build-zip.sh` builds the release zip.
 
 ## How blocks are built
 
-- No build step: editor scripts are plain JavaScript on the `wp.*` globals, with an `index.asset.php` listing their dependencies. Front-end behaviour is a small `viewScriptModule` that loads only where the block is used.
+- No build step: editor scripts are plain JavaScript on the `wp.*` globals, with an `index.asset.php` listing their dependencies. Front-end behaviour is a small `viewScriptModule` on the Interactivity API (`@wordpress/interactivity`, listed in `view.asset.php`; directives in `render.php`, `supports.interactivity` in `block.json`) that loads only where the block is used. Don't hand-roll DOM wiring the Interactivity API already does.
 - Blocks save their inner blocks only and render their wrapper in `render.php`, so the wrapper markup can change without "Invalid block" errors. Changing what `save()` returns needs a deprecation.
 - Styles fall back gracefully: use the theme's presets (`--wp--preset--color--base`, spacing, radius, shadow) with plain fallbacks, so blocks look right on the AnyPress theme and on any other theme. Never hard-code a brand colour.
 - Block names (`anypress/<name>`) and attribute names are stable: live sites store them.

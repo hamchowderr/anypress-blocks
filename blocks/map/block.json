@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "anypress/map",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"title": "Map",
 	"category": "embed",
 	"description": "A map of an address from OpenStreetMap, with a pin and a link for directions. No account or API key needed.",
@@ -67,7 +67,8 @@
 			"width": true,
 			"style": true
 		},
-		"shadow": true
+		"shadow": true,
+		"interactivity": true
 	},
 	"example": {
 		"attributes": {

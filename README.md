@@ -13,7 +13,7 @@ Interactive blocks for any WordPress block theme: Popup, Carousel, Counter and M
 
 ## Install
 
-Download `anypress-blocks.zip` from the [latest release](https://github.com/hamchowderr/anypress-blocks/releases/latest), then in WordPress go to Plugins > Add New > Upload Plugin. Requires WordPress 6.5 and PHP 7.4 or later.
+Download `anypress-blocks.zip` from the [latest release](https://github.com/hamchowderr/anypress-blocks/releases/latest), then in WordPress go to Plugins > Add New > Upload Plugin. Requires WordPress 6.8 and PHP 7.4 or later.
 
 ## Use the Popup
 
