@@ -130,6 +130,7 @@ const pages = {
         `<!-- wp:paragraph {"metadata":{"bindings":{"content":{"source":"anypress/site-details","args":{"key":"address"}}}}} -->\n<p>Your address</p>\n<!-- /wp:paragraph -->`,
         `<!-- wp:paragraph {"metadata":{"bindings":{"content":{"source":"anypress/site-details","args":{"key":"hours"}}}}} -->\n<p>Open every day</p>\n<!-- /wp:paragraph -->`,
         `<!-- wp:buttons -->\n<div class="wp-block-buttons"><!-- wp:button {"metadata":{"bindings":{"url":{"source":"anypress/site-details","args":{"key":"phone_link"}},"text":{"source":"anypress/site-details","args":{"key":"phone"}}}}} -->\n<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="tel:">Call us</a></div>\n<!-- /wp:button --></div>\n<!-- /wp:buttons -->`,
+        `<!-- wp:paragraph {"metadata":{"bindings":{"content":{"source":"anypress/site-details","args":{"key":"phone_linked"}}}}} -->\n<p class="linked-phone"><a href="tel:5550000">555 0000</a></p>\n<!-- /wp:paragraph -->`,
     ].join('\n\n'),
 };
 await php(`update_option('anypress_site_details', ['phone' => '(217) 555-0142', 'address' => "12 Main Street\\nSpringfield"]); echo 1;`);
@@ -394,6 +395,7 @@ try {
     check(/<h2[^>]*>Springfield Bakery<\/h2>/.test(dhtml), 'a bound heading shows the business name (the site title until one is set)');
     check(dhtml.includes('12 Main Street<br') && dhtml.includes('Springfield</p>'), 'a bound paragraph shows the address, line breaks kept');
     check(dhtml.includes('href="tel:2175550142"') && dhtml.includes('(217) 555-0142</a>'), 'a bound button calls the phone number');
+    check(/<p class="linked-phone[^"]*"><a href="tel:2175550142">\(217\) 555-0142<\/a><\/p>/.test(dhtml), 'a bound paragraph shows the phone number as a call link');
     check(dhtml.includes('Open every day'), 'a detail not set yet shows the text saved in the block');
     await etab.goto(`${base}/wp-admin/post.php?post=${ids.details}&action=edit`);
     await etab.waitForFunction(() => window.wp?.data?.select('core/block-editor')?.getBlocks().length > 0, null, { timeout: 60000 });

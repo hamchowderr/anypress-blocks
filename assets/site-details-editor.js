@@ -12,9 +12,15 @@
 		if ( ! details.name && site.title ) details.name = site.title;
 		return details;
 	};
+	const escape = ( text ) => String( text ).replace( /[&<>"]/g, ( c ) => ( { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' } )[ c ] );
 	const valueFor = ( details, key ) => {
 		if ( key === 'phone_link' ) return details.phone ? 'tel:' + details.phone.replace( /[^0-9+]/g, '' ) : undefined;
 		if ( key === 'email_link' ) return details.email ? 'mailto:' + details.email : undefined;
+		if ( key === 'phone_linked' || key === 'email_linked' ) {
+			const text = key === 'phone_linked' ? details.phone : details.email;
+			const link = valueFor( details, key === 'phone_linked' ? 'phone_link' : 'email_link' );
+			return link ? '<a href="' + escape( link ) + '">' + escape( text ) + '</a>' : undefined;
+		}
 		return details[ key ] || undefined;
 	};
 
@@ -50,6 +56,8 @@
 			const list = Object.entries( fields ).map( ( [ key, label ] ) => ( { label, type: 'string', args: { key } } ) );
 			list.push( { label: __( 'Phone (call link)', 'anypress-blocks' ), type: 'string', args: { key: 'phone_link' } } );
 			list.push( { label: __( 'Email (mail link)', 'anypress-blocks' ), type: 'string', args: { key: 'email_link' } } );
+			list.push( { label: __( 'Phone, as a call link', 'anypress-blocks' ), type: 'string', args: { key: 'phone_linked' } } );
+			list.push( { label: __( 'Email, as a mail link', 'anypress-blocks' ), type: 'string', args: { key: 'email_linked' } } );
 			return list;
 		},
 	} );
