@@ -17,6 +17,8 @@ jobs:
           tools: none
       - name: PHP syntax (7.4, the lowest version the plugin supports)
         run: find . -name '*.php' -not -path './tests/node_modules/*' -print0 | xargs -0 -n1 php -l > /dev/null
+      - name: Blocks manifest matches the block.json files
+        run: php bin/build-manifest.php --check
       - uses: actions/setup-node@v4
         with:
           node-version: 24

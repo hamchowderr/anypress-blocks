@@ -1,10 +1,10 @@
 === AnyPress Blocks ===
 Contributors: anypress
 Tags: popup, carousel, counter, map, blocks
-Requires at least: 6.5
+Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.2.0
+Stable tag: 0.3.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -71,6 +71,11 @@ Any block. Each block directly inside the carousel is one slide, so a group with
 The map is loaded from OpenStreetMap, which sees the visitor's IP address like any embedded map. Pressing "Find on the map" in the editor asks OpenStreetMap's Nominatim search for the address once. Turn on "Ask before loading the map" if visitors should agree first.
 
 == Changelog ==
+
+= 0.3.0 =
+* Changed: every block's behaviour on the page now runs on the WordPress Interactivity API, the same system core blocks use, so it keeps working with client-side navigation and cleans up after itself.
+* Changed: the blocks register from one manifest file, so WordPress no longer reads each block.json on every request. Needs WordPress 6.8 or later.
+* Changed: carousel slide names ("1 of 5") are translatable.
 
 = 0.2.0 =
 * New: Carousel block. Slides that scroll sideways with arrows, dots, swiping, arrow keys and optional autoplay.

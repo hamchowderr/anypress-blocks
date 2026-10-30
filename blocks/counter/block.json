@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "anypress/counter",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"title": "Counter",
 	"category": "design",
 	"description": "A big number that counts up when it scrolls into view, such as years in business, jobs done or happy customers. Put a short label under it.",
@@ -55,7 +55,8 @@
 			"__experimentalDefaultControls": {
 				"fontSize": true
 			}
-		}
+		},
+		"interactivity": true
 	},
 	"example": {
 		"attributes": {
