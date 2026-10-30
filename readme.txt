@@ -73,6 +73,7 @@ The map is loaded from OpenStreetMap, which sees the visitor's IP address like a
 == Changelog ==
 
 = 0.3.0 =
+* New: Site details. Keep the business name, phone, email, address and opening hours once, and any heading, paragraph or button can show them (block bindings, source "anypress/site-details"). Edit a detail right in the block, and every page shows the change. Buttons can call the phone number or email the address.
 * Changed: every block's behaviour on the page now runs on the WordPress Interactivity API, the same system core blocks use, so it keeps working with client-side navigation and cleans up after itself.
 * Changed: the blocks register from one manifest file, so WordPress no longer reads each block.json on every request. Needs WordPress 6.8 or later.
 * Changed: carousel slide names ("1 of 5") are translatable.
