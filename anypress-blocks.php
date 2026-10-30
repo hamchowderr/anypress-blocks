@@ -27,3 +27,5 @@ function anypress_blocks_register() {
 	wp_register_block_types_from_metadata_collection( __DIR__ . '/blocks', __DIR__ . '/blocks-manifest.php' );
 }
 add_action( 'init', 'anypress_blocks_register' );
+
+require __DIR__ . '/includes/site-details.php';

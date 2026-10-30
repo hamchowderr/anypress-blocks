@@ -20,6 +20,9 @@
 //     with reduced motion
 //   - the map embeds OpenStreetMap with a pin, links to directions, and an ask-first map loads only when asked
 //   - all three stay valid in the editor, which shows the counter's number and a map preview
+//   Site details (the anypress/site-details bindings source):
+//   - bound headings, paragraphs and buttons show the saved name, address and phone; an unset detail keeps the block's text
+//   - the editor lists the details, shows them in bound blocks, and editing one saves it to the site settings
 //
 // Environment: ANYPRESS_THEME_ZIP (theme zip URL, default the latest AnyPress theme release), PLAYGROUND_WP, PLAYGROUND_PHP
 // (default 7.1.3 and 8.3, what stores run), PLAYGROUND_PORT (9420), SHOTS (screenshots folder, default ./shots).
@@ -122,7 +125,14 @@ const pages = {
         `<!-- wp:anypress/map {"address":"Springfield, Illinois","lat":39.7817,"lon":-89.6501,"zoom":12} /-->`,
         `<!-- wp:anypress/map {"address":"Oak Hill","lat":39.79,"lon":-89.61,"askFirst":true,"directions":false,"aspect":"4/3"} /-->`,
     ].join('\n\n'),
+    details: [
+        `<!-- wp:heading {"metadata":{"bindings":{"content":{"source":"anypress/site-details","args":{"key":"name"}}}}} -->\n<h2 class="wp-block-heading">Business name</h2>\n<!-- /wp:heading -->`,
+        `<!-- wp:paragraph {"metadata":{"bindings":{"content":{"source":"anypress/site-details","args":{"key":"address"}}}}} -->\n<p>Your address</p>\n<!-- /wp:paragraph -->`,
+        `<!-- wp:paragraph {"metadata":{"bindings":{"content":{"source":"anypress/site-details","args":{"key":"hours"}}}}} -->\n<p>Open every day</p>\n<!-- /wp:paragraph -->`,
+        `<!-- wp:buttons -->\n<div class="wp-block-buttons"><!-- wp:button {"metadata":{"bindings":{"url":{"source":"anypress/site-details","args":{"key":"phone_link"}},"text":{"source":"anypress/site-details","args":{"key":"phone"}}}}} -->\n<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="tel:">Call us</a></div>\n<!-- /wp:button --></div>\n<!-- /wp:buttons -->`,
+    ].join('\n\n'),
 };
+await php(`update_option('anypress_site_details', ['phone' => '(217) 555-0142', 'address' => "12 Main Street\\nSpringfield"]); echo 1;`);
 const ids = await php(`
     $out = [];
     foreach (json_decode(${JSON.stringify(JSON.stringify(pages))}, true) as $slug => $content) {
@@ -377,6 +387,42 @@ try {
         return all[all.length - 1].innerBlocks.length;
     });
     check(freshCar === 3, 'a new carousel starts with three slides to fill in', String(freshCar));
+
+    // Site details: bound blocks show the saved details, and editing one in the editor saves it for every page.
+    console.log('Site details');
+    const dhtml = await (await fetch(`${base}/popup-details/`)).text();
+    check(/<h2[^>]*>Springfield Bakery<\/h2>/.test(dhtml), 'a bound heading shows the business name (the site title until one is set)');
+    check(dhtml.includes('12 Main Street<br') && dhtml.includes('Springfield</p>'), 'a bound paragraph shows the address, line breaks kept');
+    check(dhtml.includes('href="tel:2175550142"') && dhtml.includes('(217) 555-0142</a>'), 'a bound button calls the phone number');
+    check(dhtml.includes('Open every day'), 'a detail not set yet shows the text saved in the block');
+    await etab.goto(`${base}/wp-admin/post.php?post=${ids.details}&action=edit`);
+    await etab.waitForFunction(() => window.wp?.data?.select('core/block-editor')?.getBlocks().length > 0, null, { timeout: 60000 });
+    await etab.waitForTimeout(1500);
+    const src = await etab.evaluate(() => {
+        const source = window.wp.blocks.getBlockBindingsSource?.('anypress/site-details');
+        const doc = document.querySelector('iframe[name="editor-canvas"]')?.contentDocument || document;
+        return { registered: !!source, fields: source?.getFieldsList?.().map((f) => f.args.key) || [], shown: doc.querySelector('.wp-block-paragraph')?.textContent || '' };
+    });
+    check(src.registered && src.fields.includes('hours') && src.fields.includes('phone_link'), 'the editor knows the source and lists its details', JSON.stringify(src.fields));
+    check(src.shown.includes('12 Main Street'), 'the editor shows the saved address in its bound paragraph', src.shown);
+    // Type into the bound paragraph as an owner would: bound text is editable only where the source allows it.
+    const canvas = etab.frameLocator('iframe[name="editor-canvas"]');
+    const hoursP = canvas.locator('p.wp-block-paragraph', { hasText: 'Open every day' });
+    const editable = await hoursP.getAttribute('contenteditable', { timeout: 5000 });
+    await hoursP.click();
+    await etab.keyboard.press('ControlOrMeta+a');
+    await etab.keyboard.type('Mon to Sat, 7 to 3');
+    await etab.waitForTimeout(500);
+    const saved = await etab.evaluate(async () => {
+        const { select, dispatch } = window.wp.data;
+        const edited = select('core').getEditedEntityRecord('root', 'site').anypress_site_details;
+        await dispatch('core').saveEditedEntityRecord('root', 'site');
+        return edited;
+    });
+    check(editable === 'true', 'an admin can edit a bound detail in place', String(editable));
+    check(saved?.hours === 'Mon to Sat, 7 to 3' && saved?.phone === '(217) 555-0142', 'editing a bound detail in the editor changes that detail only', JSON.stringify(saved));
+    const stored = await php(`echo json_encode(get_option('anypress_site_details'));`);
+    check(stored.hours === 'Mon to Sat, 7 to 3', 'saving keeps it in the site settings, so every page shows it', JSON.stringify(stored));
     await ed.close();
 } catch (e) {
     fail(`browser checks did not finish: ${e.message.split('\n')[0]}`);
