@@ -85,7 +85,8 @@ function anypress_blocks_sanitize_site_details( $value ) {
 
 /**
  * One detail for a bound block. args.key names the detail; "phone_link" and "email_link" give a tel: or mailto: link
- * for a button. An empty detail returns null, so the block shows the text saved in it.
+ * for a button, and "phone_linked" and "email_linked" the number or address as a link, for text. An empty detail
+ * returns null, so the block shows the text saved in it.
  *
  * @param array $source_args Binding args.
  * @return string|null
@@ -101,6 +102,11 @@ function anypress_blocks_site_detail_value( array $source_args ) {
 	}
 	if ( 'email_link' === $key ) {
 		return ! empty( $details['email'] ) ? 'mailto:' . $details['email'] : null;
+	}
+	if ( 'phone_linked' === $key || 'email_linked' === $key ) {
+		$link = anypress_blocks_site_detail_value( array( 'key' => 'phone_linked' === $key ? 'phone_link' : 'email_link' ) );
+		$text = 'phone_linked' === $key ? ( $details['phone'] ?? '' ) : ( $details['email'] ?? '' );
+		return null === $link ? null : '<a href="' . esc_url( $link, array( 'tel', 'mailto' ) ) . '">' . esc_html( $text ) . '</a>';
 	}
 	if ( empty( $details[ $key ] ) ) {
 		return null;

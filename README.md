@@ -21,7 +21,7 @@ Keep the business name, phone, email, address and opening hours in one place, an
 <!-- /wp:paragraph -->
 ```
 
-Keys: `name` (falls back to the site title), `phone`, `email`, `address`, `hours`, and for button links `phone_link` (`tel:`) and `email_link` (`mailto:`). A detail that is not set yet leaves the block's own text in place. In the editor, pick a detail from the block's Attributes panel, and type straight into the block to change it: every page that shows it updates.
+Keys: `name` (falls back to the site title), `phone`, `email`, `address`, `hours`, for button links `phone_link` (`tel:`) and `email_link` (`mailto:`), and for text that should stay a link `phone_linked` and `email_linked` (the number or address, linked to call or write). A detail that is not set yet leaves the block's own text in place. In the editor, pick a detail from the block's Attributes panel, and type straight into the block to change it: every page that shows it updates.
 
 ## Install
 

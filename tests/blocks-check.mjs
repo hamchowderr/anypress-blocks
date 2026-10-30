@@ -130,6 +130,7 @@ const pages = {
         `<!-- wp:paragraph {"metadata":{"bindings":{"content":{"source":"anypress/site-details","args":{"key":"address"}}}}} -->\n<p>Your address</p>\n<!-- /wp:paragraph -->`,
         `<!-- wp:paragraph {"metadata":{"bindings":{"content":{"source":"anypress/site-details","args":{"key":"hours"}}}}} -->\n<p>Open every day</p>\n<!-- /wp:paragraph -->`,
         `<!-- wp:buttons -->\n<div class="wp-block-buttons"><!-- wp:button {"metadata":{"bindings":{"url":{"source":"anypress/site-details","args":{"key":"phone_link"}},"text":{"source":"anypress/site-details","args":{"key":"phone"}}}}} -->\n<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="tel:">Call us</a></div>\n<!-- /wp:button --></div>\n<!-- /wp:buttons -->`,
+        `<!-- wp:paragraph {"metadata":{"bindings":{"content":{"source":"anypress/site-details","args":{"key":"phone_linked"}}}}} -->\n<p class="linked-phone"><a href="tel:5550000">555 0000</a></p>\n<!-- /wp:paragraph -->`,
     ].join('\n\n'),
 };
 await php(`update_option('anypress_site_details', ['phone' => '(217) 555-0142', 'address' => "12 Main Street\\nSpringfield"]); echo 1;`);
@@ -357,9 +358,14 @@ try {
     const fresh = await etab.evaluate(async () => {
         const { createBlock } = window.wp.blocks;
         window.wp.data.dispatch('core/block-editor').insertBlocks(createBlock('anypress/popup'));
-        await new Promise((r) => setTimeout(r, 800));
-        const all = window.wp.data.select('core/block-editor').getBlocks().filter((b) => b.name === 'anypress/popup');
-        const last = all[all.length - 1];
+        // The block fills in its id and starter blocks once its editor mounts; wait up to 10 seconds for that.
+        let last;
+        for (let i = 0; i < 50; i++) {
+            await new Promise((r) => setTimeout(r, 200));
+            const all = window.wp.data.select('core/block-editor').getBlocks().filter((b) => b.name === 'anypress/popup');
+            last = all[all.length - 1];
+            if (last.attributes.popupId && last.innerBlocks.length) break;
+        }
         return { id: last.attributes.popupId, inner: last.innerBlocks.map((b) => b.name) };
     });
     check(/^popup-[a-z0-9]{8}$/.test(fresh.id) && fresh.inner.join() === 'core/heading,core/paragraph', 'a new popup gets an id and a heading and paragraph to fill in', JSON.stringify(fresh));
@@ -374,6 +380,11 @@ try {
     });
     check(['anypress/carousel', 'anypress/counter', 'anypress/map'].every((n) => bblocks.some((b) => b.name === n && b.valid)) && bblocks.every((b) => b.valid),
         'the editor loads Carousel, Counter and Map as valid blocks', bblocks.filter((b) => !b.valid).map((b) => b.name).join(', '));
+    // The editor canvas renders blocks as they come into view; give the map preview time to appear.
+    await etab.waitForFunction(() => {
+        const doc = document.querySelector('iframe[name="editor-canvas"]')?.contentDocument || document;
+        return !!doc.querySelector('.wp-block-anypress-map iframe');
+    }, null, { timeout: 15000 }).catch(() => {});
     const shown = await etab.evaluate(() => {
         const doc = document.querySelector('iframe[name="editor-canvas"]')?.contentDocument || document;
         return { counter: doc.querySelector('.wp-block-anypress-counter')?.textContent, map: !!doc.querySelector('.wp-block-anypress-map iframe') };
@@ -394,6 +405,7 @@ try {
     check(/<h2[^>]*>Springfield Bakery<\/h2>/.test(dhtml), 'a bound heading shows the business name (the site title until one is set)');
     check(dhtml.includes('12 Main Street<br') && dhtml.includes('Springfield</p>'), 'a bound paragraph shows the address, line breaks kept');
     check(dhtml.includes('href="tel:2175550142"') && dhtml.includes('(217) 555-0142</a>'), 'a bound button calls the phone number');
+    check(/<p class="linked-phone[^"]*"><a href="tel:2175550142">\(217\) 555-0142<\/a><\/p>/.test(dhtml), 'a bound paragraph shows the phone number as a call link');
     check(dhtml.includes('Open every day'), 'a detail not set yet shows the text saved in the block');
     await etab.goto(`${base}/wp-admin/post.php?post=${ids.details}&action=edit`);
     await etab.waitForFunction(() => window.wp?.data?.select('core/block-editor')?.getBlocks().length > 0, null, { timeout: 60000 });
