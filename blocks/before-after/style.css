@@ -1,0 +1,78 @@
+/* Before and After block. Both photos fill the frame; the "after" one is cut from the left at the handle
+   (--anypress-ba-pos), so "before" shows on the left and "after" on the right. The range input covers the frame and is
+   see-through; its thumb is the whole height, so a finger anywhere near the handle grabs it. */
+.wp-block-anypress-before-after { margin-inline: 0; overflow: hidden; }
+.wp-block-anypress-before-after__frame {
+	position: relative;
+	aspect-ratio: var(--anypress-ba-aspect, 4/3);
+	overflow: hidden;
+	border-radius: inherit;
+	background: color-mix(in srgb, currentColor 8%, transparent);
+	user-select: none;
+}
+.wp-block-anypress-before-after__frame > img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	max-width: none;
+	object-fit: cover;
+}
+.wp-block-anypress-before-after__after { clip-path: inset(0 0 0 var(--anypress-ba-pos, 50%)); }
+.wp-block-anypress-before-after__label {
+	position: absolute;
+	bottom: 0.75rem;
+	padding: 0.25em 0.6em;
+	border-radius: 999px;
+	background: rgb(0 0 0 / 0.65);
+	color: #fff;
+	font-size: var(--wp--preset--font-size--x-small, 0.875rem);
+	font-weight: 600;
+	line-height: 1.4;
+	pointer-events: none;
+}
+.wp-block-anypress-before-after__label.is-before { left: 0.75rem; }
+.wp-block-anypress-before-after__label.is-after { right: 0.75rem; }
+.wp-block-anypress-before-after__handle {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: var(--anypress-ba-pos, 50%);
+	width: 3px;
+	transform: translateX(-50%);
+	background: #fff;
+	box-shadow: 0 0 0 1px rgb(0 0 0 / 0.25);
+	pointer-events: none;
+}
+.wp-block-anypress-before-after__handle svg {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 48px;
+	height: 48px;
+	padding: 12px;
+	transform: translate(-50%, -50%);
+	border-radius: 50%;
+	background: #fff;
+	color: #111;
+	box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
+}
+.wp-block-anypress-before-after__frame:has(.wp-block-anypress-before-after__range:focus-visible) .wp-block-anypress-before-after__handle svg {
+	outline: 3px solid var(--wp--preset--color--primary, #111);
+	outline-offset: 2px;
+}
+.wp-block-anypress-before-after__range {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	opacity: 0;
+	cursor: ew-resize;
+	-webkit-appearance: none;
+	appearance: none;
+	background: transparent;
+	touch-action: pan-y;
+}
+.wp-block-anypress-before-after__range::-webkit-slider-thumb { -webkit-appearance: none; width: 48px; height: 100vh; cursor: ew-resize; }
+.wp-block-anypress-before-after__range::-moz-range-thumb { width: 48px; height: 100vh; border: 0; cursor: ew-resize; }

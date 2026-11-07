@@ -1,0 +1,35 @@
+/* Notice Bar block: one short line, centred, in the theme's dark text colour unless the block sets its own colours.
+   The close button sits at the end and is a full-size tap target. */
+.wp-block-anypress-notice-bar {
+	position: relative;
+	align-items: center;
+	gap: 0.5rem 1rem;
+	margin-block: 0;
+	padding: 0.5rem 1rem;
+	text-align: center;
+	font-size: var(--wp--preset--font-size--small, 0.9375rem);
+}
+.wp-block-anypress-notice-bar:not(.has-background) { background: var(--wp--preset--color--main, #111); }
+.wp-block-anypress-notice-bar:not(.has-text-color) { color: var(--wp--preset--color--base, #fff); }
+.wp-block-anypress-notice-bar:not(.has-link-color) a { color: inherit; }
+.wp-block-anypress-notice-bar > * { margin: 0; }
+.wp-block-anypress-notice-bar.is-dismissible { padding-inline-end: 3.25rem; }
+.wp-block-anypress-notice-bar[hidden] { display: none !important; }
+.wp-block-anypress-notice-bar__close {
+	position: absolute;
+	top: 50%;
+	right: 0.25rem;
+	display: grid;
+	place-items: center;
+	width: 44px;
+	height: 44px;
+	padding: 0;
+	transform: translateY(-50%);
+	border: 0;
+	border-radius: 50%;
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+}
+.wp-block-anypress-notice-bar__close:hover { background: color-mix(in srgb, currentColor 12%, transparent); }
+.wp-block-anypress-notice-bar__close:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }

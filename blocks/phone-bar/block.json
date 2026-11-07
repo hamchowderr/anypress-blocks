@@ -1,0 +1,56 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "anypress/phone-bar",
+	"version": "0.4.0",
+	"title": "Phone Bar",
+	"category": "widgets",
+	"description": "A bar fixed to the bottom of the screen with a Call button and a Book button, so the main action is always one tap away. Shows on phones only, or on every screen. Put it in the footer to have it on every page.",
+	"keywords": [
+		"call",
+		"phone",
+		"book",
+		"sticky",
+		"mobile",
+		"click to call"
+	],
+	"textdomain": "anypress-blocks",
+	"attributes": {
+		"phone": {
+			"type": "string",
+			"default": ""
+		},
+		"callLabel": {
+			"type": "string",
+			"default": ""
+		},
+		"bookUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"bookLabel": {
+			"type": "string",
+			"default": ""
+		},
+		"showOn": {
+			"type": "string",
+			"enum": [
+				"phones",
+				"all"
+			],
+			"default": "phones"
+		}
+	},
+	"supports": {
+		"html": false,
+		"multiple": false,
+		"color": {
+			"background": true,
+			"text": true
+		}
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./editor.css",
+	"style": "file:./style.css",
+	"render": "file:./render.php"
+}

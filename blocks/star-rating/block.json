@@ -1,0 +1,67 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "anypress/star-rating",
+	"version": "0.4.0",
+	"title": "Star Rating",
+	"category": "widgets",
+	"description": "Stars for a rating, such as 4.9 out of 5, with how many reviews and where they are from. Screen readers hear the rating in words.",
+	"keywords": [
+		"stars",
+		"rating",
+		"reviews",
+		"google reviews",
+		"score",
+		"testimonial"
+	],
+	"textdomain": "anypress-blocks",
+	"attributes": {
+		"rating": {
+			"type": "number",
+			"default": 5
+		},
+		"outOf": {
+			"type": "number",
+			"default": 5
+		},
+		"count": {
+			"type": "number",
+			"default": 0
+		},
+		"source": {
+			"type": "string",
+			"default": ""
+		},
+		"showText": {
+			"type": "boolean",
+			"default": true
+		}
+	},
+	"supports": {
+		"html": false,
+		"color": {
+			"text": true,
+			"background": false,
+			"link": false
+		},
+		"typography": {
+			"fontSize": true
+		},
+		"spacing": {
+			"margin": [
+				"top",
+				"bottom"
+			]
+		}
+	},
+	"example": {
+		"attributes": {
+			"rating": 4.9,
+			"count": 127,
+			"source": "Google"
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style.css",
+	"render": "file:./render.php"
+}

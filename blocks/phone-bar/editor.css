@@ -1,0 +1,2 @@
+/* In the editor the bar sits where it is placed, not over the canvas. */
+.editor-styles-wrapper .wp-block-anypress-phone-bar { position: relative; inset: auto; display: grid !important; max-width: 420px; }
