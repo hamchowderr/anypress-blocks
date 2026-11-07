@@ -1,14 +1,14 @@
 === AnyPress Blocks ===
 Contributors: anypress
-Tags: popup, carousel, counter, map, blocks
+Tags: popup, carousel, store locator, before and after, countdown
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.3.0
+Stable tag: 0.4.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Interactive blocks for any block theme: a Popup, a Carousel, a Counter and a Map.
+Interactive blocks for any block theme: popups, carousels, maps, a location finder, before and after photos, countdowns, star ratings and more.
 
 == Description ==
 
@@ -42,6 +42,38 @@ A big number that counts up when it scrolls into view: years in business, jobs d
 
 A map of your address from OpenStreetMap, with a pin and a "Get directions" link. Type the address and press "Find on the map". No account or API key. Turn on "Ask before loading the map" to load nothing from OpenStreetMap until the visitor asks for it.
 
+**Location Finder**
+
+A list of your locations next to a map, for franchises, chains and businesses with several branches. Visitors search by town, street or zip code, or tap "Near me" to sort the list nearest first (the browser asks them first, and their position never leaves their device). Picking a location moves the map to it. Each location can have a phone number, opening hours, a directions link and a link to its own page. Uses OpenStreetMap; no account or API key.
+
+**Before and After**
+
+Two photos of the same job with a handle visitors drag to compare: a kitchen refit, a lawn, a haircut, a roof. Works with a finger, a mouse and the arrow keys, and screen readers hear it as a slider.
+
+**Countdown**
+
+Days, hours, minutes and seconds until a date, in your site's time zone: an offer ending, an event starting. When the time is up it shows your own words, such as "This offer has ended", or hides itself.
+
+**Star Rating**
+
+Stars filled to a rating, such as 4.9 out of 5, with how many reviews and where they are from. Screen readers hear the rating in words.
+
+**Notice Bar**
+
+A thin bar for one short message, such as holiday hours or free delivery. Visitors can close it; it stays closed for as many days as you choose, and shows again as soon as you change the message.
+
+**Phone Bar**
+
+Call and Book buttons fixed to the bottom of the screen, so the main action is always one tap away. Phones only, or every screen. It uses the phone number from Site details unless you give it another.
+
+**Age Check**
+
+Asks visitors to confirm their age before they see the site, for shops selling alcohol, tobacco or other age-restricted goods, and remembers a "Yes". "No" can send them to another page. It is a polite check, not proof of age.
+
+**Tabs and accordions**
+
+WordPress 7.1 has its own Tabs and Accordion blocks, so this plugin doesn't add them. They work with the AnyPress theme's styles, and two tabs make a monthly and yearly price switch.
+
 == Installation ==
 
 1. Upload the plugin zip in Plugins > Add New > Upload Plugin, then activate it.
@@ -71,6 +103,15 @@ Any block. Each block directly inside the carousel is one slide, so a group with
 The map is loaded from OpenStreetMap, which sees the visitor's IP address like any embedded map. Pressing "Find on the map" in the editor asks OpenStreetMap's Nominatim search for the address once. Turn on "Ask before loading the map" if visitors should agree first.
 
 == Changelog ==
+
+= 0.4.0 =
+* New: Location Finder block. A searchable list of locations beside a map, with "Near me" sorting, directions and opening hours.
+* New: Before and After block. Two photos with a handle to drag between them, by finger, mouse or keyboard.
+* New: Countdown block. Time left until a date, with your own words when it ends.
+* New: Star Rating block. Stars, the rating in words, and how many reviews and where.
+* New: Notice Bar block. A short message bar that visitors can close until the message changes.
+* New: Phone Bar block. Call and Book buttons fixed to the bottom of the screen.
+* New: Age Check block. Asks visitors to confirm their age and remembers the answer.
 
 = 0.3.0 =
 * New: Site details. Keep the business name, phone, email, address and opening hours once, and any heading, paragraph or button can show them (block bindings, source "anypress/site-details"). Edit a detail right in the block, and every page shows the change. Buttons and text can call the phone number or email the address.

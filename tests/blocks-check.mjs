@@ -24,6 +24,18 @@
 //   - bound headings, paragraphs and buttons show the saved name, address and phone; an unset detail keeps the block's text
 //   - the editor lists the details, shows them in bound blocks, and editing one saves it to the site settings
 //
+// Location Finder, Before and After, Countdown, Star Rating, Notice Bar, Phone Bar and Age Check blocks:
+//   - the finder lists every location with directions, filters as the visitor types, sorts nearest first after
+//     "Near me", and moves the map to the location picked; on a phone the map sits above the list
+//   - before and after: the handle moves with a drag and with the arrow keys, and the "after" photo is cut there
+//   - the countdown prints the time left, ticks every second, and shows its "ended" words once the time is up
+//   - star rating: stars filled to the rating and the rating in words
+//   - the notice bar closes, stays closed on the next visit, and shows again when its message changes
+//   - the phone bar sits at the bottom of a phone screen with full-size buttons, calls Site details' number, and is
+//     hidden on a computer
+//   - the age check covers the page until answered, ignores Escape, says sorry on "No" and remembers "Yes"
+//   - all of them stay valid in the editor
+//
 // Environment: ANYPRESS_THEME_ZIP (theme zip URL, default the latest AnyPress theme release), PLAYGROUND_WP, PLAYGROUND_PHP
 // (default 7.1.3 and 8.3, what stores run), PLAYGROUND_PORT (9420), SHOTS (screenshots folder, default ./shots).
 // Needs Playwright with Chromium.
@@ -132,6 +144,21 @@ const pages = {
         `<!-- wp:buttons -->\n<div class="wp-block-buttons"><!-- wp:button {"metadata":{"bindings":{"url":{"source":"anypress/site-details","args":{"key":"phone_link"}},"text":{"source":"anypress/site-details","args":{"key":"phone"}}}}} -->\n<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="tel:">Call us</a></div>\n<!-- /wp:button --></div>\n<!-- /wp:buttons -->`,
         `<!-- wp:paragraph {"metadata":{"bindings":{"content":{"source":"anypress/site-details","args":{"key":"phone_linked"}}}}} -->\n<p class="linked-phone"><a href="tel:5550000">555 0000</a></p>\n<!-- /wp:paragraph -->`,
     ].join('\n\n'),
+    more: [
+        `<!-- wp:anypress/notice-bar {"noticeId":"holiday","align":"full"} -->\n<!-- wp:paragraph -->\n<p>Closed 24 to 26 December. <a href="/order/">Order cakes by the 20th</a>.</p>\n<!-- /wp:paragraph -->\n<!-- /wp:anypress/notice-bar -->`,
+        `<!-- wp:anypress/star-rating {"rating":4.8,"count":127,"source":"Google"} /-->`,
+        `<!-- wp:anypress/countdown {"date":"${new Date(Date.now() + 2 * 86400000 + 3 * 3600000).toISOString().slice(0, 19)}"} /-->`,
+        `<!-- wp:anypress/countdown {"date":"2020-01-01T09:00:00","endText":"This offer has ended","className":"is-past"} /-->`,
+        `<!-- wp:anypress/countdown {"date":"2020-01-01T09:00:00","className":"is-hidden-past"} /-->`,
+        `<!-- wp:anypress/before-after {"beforeUrl":"/wp-content/plugins/anypress-blocks/tests/fixtures/before.jpg","beforeAlt":"The kitchen before","afterUrl":"/wp-content/plugins/anypress-blocks/tests/fixtures/after.jpg","afterAlt":"The kitchen after the refit","start":40} /-->`,
+        `<!-- wp:anypress/location-finder ${JSON.stringify({ locations: [
+            { name: 'Downtown', address: '12 Main Street, Springfield, IL', phone: '(217) 555-0101', hours: 'Mon to Sat 7 to 3', lat: 39.8017, lon: -89.6436, url: '/locations/downtown/' },
+            { name: 'West Side', address: '400 Wabash Avenue, Springfield, IL', lat: 39.7737, lon: -89.7112 },
+            { name: 'Chatham', address: '20 State Street, Chatham, IL 62629', lat: 39.6761, lon: -89.7046 },
+        ] })} /-->`,
+    ].join('\n\n'),
+    bar: `<!-- wp:paragraph -->\n<p>Bottom of the page.</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:anypress/phone-bar {"bookUrl":"/book/","bookLabel":"Book a cake"} /-->\n\n` + filler,
+    age: `<!-- wp:anypress/age-check {"minAge":21} -->\n<!-- wp:heading -->\n<h2 class="wp-block-heading">Are you 21 or over?</h2>\n<!-- /wp:heading -->\n<!-- /wp:anypress/age-check -->\n\n` + filler,
 };
 await php(`update_option('anypress_site_details', ['phone' => '(217) 555-0142', 'address' => "12 Main Street\\nSpringfield"]); echo 1;`);
 const ids = await php(`
@@ -144,7 +171,7 @@ const ids = await php(`
 
 if (SERVE) {
     // Auto-login sends cookie-less requests round in circles, so serving skips the checks.
-    console.log(`Serving ${base} (admin / password): /popup-delay/, /popup-click/, /popup-scroll/, /popup-blocks/. Ctrl+C to stop.`);
+    console.log(`Serving ${base} (admin / password): /popup-delay/, /popup-click/, /popup-scroll/, /popup-blocks/, /popup-more/, /popup-bar/, /popup-age/. Ctrl+C to stop.`);
     await new Promise(() => {});
 }
 
@@ -334,6 +361,151 @@ try {
     await bptab.screenshot({ path: resolve(SHOTS, 'carousel-phone.png') });
     await bphone.close();
 
+
+    // Location Finder, Before and After, Countdown, Star Rating, Notice Bar, Phone Bar and Age Check.
+    console.log('Location Finder, Before and After, Countdown, Star Rating, Notice Bar, Phone Bar and Age Check');
+    const nreg = await php(`echo json_encode(array_map(fn($n) => WP_Block_Type_Registry::get_instance()->is_registered("anypress/$n"), ['location-finder' => 'location-finder', 'before-after' => 'before-after', 'countdown' => 'countdown', 'star-rating' => 'star-rating', 'notice-bar' => 'notice-bar', 'phone-bar' => 'phone-bar', 'age-check' => 'age-check']));`);
+    check(Object.values(nreg).every(Boolean), 'the seven new blocks are registered', JSON.stringify(nreg));
+    const mhtml = await (await fetch(`${base}/popup-more/`)).text();
+    check(/wp-block-anypress-star-rating__text">4\.8 out of 5 from 127 Google reviews</.test(mhtml) && mhtml.includes('--anypress-rating:96%'), 'star rating: the rating in words, stars filled to 96%');
+    check(/class="[^"]*wp-block-anypress-countdown[^"]*is-past[^"]*is-ended|class="[^"]*is-ended[^"]*is-past/.test(mhtml) && mhtml.includes('This offer has ended'), 'countdown: a past date shows its "ended" words');
+    check(!mhtml.includes('is-hidden-past'), 'countdown: a past date with no "ended" words prints nothing');
+    const lfItems = mhtml.match(/<li[^>]*class="wp-block-anypress-location-finder__place[^>]*>/g) || [];
+    check(lfItems.length === 3 && lfItems.every((li) => !/\shidden/.test(li)) && (mhtml.match(/google\.com\/maps\/dir\//g) || []).length === 3, 'finder: lists all three locations, each with directions (works without JavaScript)', lfItems.join(' '));
+    check(/<iframe[^>]+openstreetmap\.org\/export\/embed\.html\?bbox=[^"]+marker=39\.8017,-89\.6436/.test(mhtml.replace(/&#038;|&amp;/g, '&')), 'finder: the map starts on the first location');
+
+    const ndesk = await browser.newContext({ viewport: { width: 1280, height: 860 }, geolocation: { latitude: 39.68, longitude: -89.70 }, permissions: ['geolocation'] });
+    const ntab = await ndesk.newPage();
+    const nerrors = [];
+    ntab.on('pageerror', (e) => nerrors.push(e.message));
+    await ntab.goto(`${base}/popup-more/`, { waitUntil: 'domcontentloaded' });
+    await ntab.waitForTimeout(600);
+
+    // Countdown ticks.
+    const tick = () => ntab.$eval('.wp-block-anypress-countdown:not(.is-ended) [data-unit="seconds"]', (e) => e.textContent);
+    const t1 = await tick();
+    await ntab.waitForTimeout(1300);
+    const t2 = await tick();
+    check(t1 !== t2 && /^\d\d$/.test(t2), 'countdown: ticks every second', `${t1} then ${t2}`);
+    check((await ntab.$eval('.wp-block-anypress-countdown:not(.is-ended) [data-unit="days"]', (e) => e.textContent)) === '2', 'countdown: two days left');
+
+    // Notice bar.
+    check(await ntab.locator('.wp-block-anypress-notice-bar').isVisible(), 'notice bar: shows');
+    await ntab.click('.wp-block-anypress-notice-bar__close');
+    check(!(await ntab.locator('.wp-block-anypress-notice-bar').isVisible()), 'notice bar: closes');
+    await ntab.reload({ waitUntil: 'domcontentloaded' });
+    await ntab.waitForTimeout(600);
+    check(!(await ntab.locator('.wp-block-anypress-notice-bar').isVisible()), 'notice bar: stays closed on the next visit');
+    await php(`$p = get_post(${ids.more}); wp_update_post(['ID' => $p->ID, 'post_content' => str_replace('Closed 24 to 26 December.', 'Closed 25 December only.', $p->post_content)]); echo 1;`);
+    await ntab.reload({ waitUntil: 'domcontentloaded' });
+    await ntab.waitForTimeout(600);
+    check(await ntab.locator('.wp-block-anypress-notice-bar').isVisible(), 'notice bar: a changed message shows again');
+
+    // Before and after.
+    const cut = () => ntab.$eval('.wp-block-anypress-before-after', (e) => getComputedStyle(e.querySelector('.wp-block-anypress-before-after__after')).clipPath);
+    check((await cut()).includes('40%'), 'before and after: starts at 40%', await cut());
+    await ntab.$eval('.wp-block-anypress-before-after__frame', (e) => e.scrollIntoView({ block: 'center' }));
+    await ntab.waitForTimeout(200);
+    const fr = await ntab.$eval('.wp-block-anypress-before-after__frame', (e) => { const r = e.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height }; });
+    await ntab.mouse.move(fr.x + fr.w * 0.4, fr.y + fr.h / 2);
+    await ntab.mouse.down();
+    await ntab.mouse.move(fr.x + fr.w * 0.75, fr.y + fr.h / 2, { steps: 8 });
+    await ntab.mouse.up();
+    const dragged = await ntab.$eval('.wp-block-anypress-before-after__range', (e) => Number(e.value));
+    check(dragged >= 70 && dragged <= 80 && (await cut()).includes(`${dragged}%`), 'before and after: dragging moves the handle and the cut', `${dragged} ${await cut()}`);
+    await ntab.focus('.wp-block-anypress-before-after__range');
+    await ntab.keyboard.press('ArrowLeft');
+    await ntab.keyboard.press('ArrowLeft');
+    check((await ntab.$eval('.wp-block-anypress-before-after__range', (e) => Number(e.value))) === dragged - 2, 'before and after: the arrow keys move it too');
+    check((await ntab.$eval('.wp-block-anypress-before-after__range', (e) => e.getAttribute('aria-label'))) === 'Compare Before and After', 'before and after: the handle has a name for screen readers');
+    await ntab.screenshot({ path: resolve(SHOTS, 'before-after-desktop.png'), clip: { x: 0, y: Math.max(0, fr.y - 20), width: 1280, height: Math.min(860, fr.h + 40) } });
+
+    // Location finder.
+    const places = () => ntab.$$eval('.wp-block-anypress-location-finder__place', (list) => list.map((li) => ({ name: li.querySelector('strong').textContent, hidden: li.hidden, order: Number(getComputedStyle(li).order), current: li.classList.contains('is-current'), dist: li.querySelector('.wp-block-anypress-location-finder__distance').textContent })));
+    const mapSrc = () => ntab.$eval('.wp-block-anypress-location-finder__map iframe', (e) => e.src);
+    await ntab.$eval('.wp-block-anypress-location-finder', (e) => e.scrollIntoView({ block: 'center' }));
+    await ntab.fill('.wp-block-anypress-location-finder input[type="search"]', 'chatham');
+    await ntab.waitForTimeout(200);
+    let pl = await places();
+    check(pl.filter((p) => !p.hidden).map((p) => p.name).join() === 'Chatham', 'finder: typing filters the list', JSON.stringify(pl));
+    check((await ntab.textContent('.wp-block-anypress-location-finder__status')) === 'Showing 1 of 3 locations', 'finder: says how many match', await ntab.textContent('.wp-block-anypress-location-finder__status'));
+    check((await mapSrc()).includes('marker=39.6761'), 'finder: the map follows the search to the first match');
+    await ntab.fill('.wp-block-anypress-location-finder input[type="search"]', 'nowhere');
+    await ntab.waitForTimeout(200);
+    check((await ntab.textContent('.wp-block-anypress-location-finder__status')).startsWith('No locations match'), 'finder: says when nothing matches');
+    await ntab.fill('.wp-block-anypress-location-finder input[type="search"]', '');
+    await ntab.click('.wp-block-anypress-location-finder__place:nth-child(2) .wp-block-anypress-location-finder__pick');
+    await ntab.waitForTimeout(200);
+    pl = await places();
+    check(pl[1].current && (await mapSrc()).includes('marker=39.7737') && (await ntab.getAttribute('.wp-block-anypress-location-finder__place:nth-child(2) .wp-block-anypress-location-finder__pick', 'aria-pressed')) === 'true', 'finder: picking a location moves the map to it', JSON.stringify(pl));
+    await ntab.click('.wp-block-anypress-location-finder__near');
+    await ntab.waitForTimeout(800);
+    pl = await places();
+    const byOrder = [...pl].sort((a, b) => a.order - b.order).map((p) => p.name);
+    check(byOrder.join() === 'Chatham,West Side,Downtown' && pl.every((p) => / mi away$/.test(p.dist)), '"Near me" sorts nearest first and shows each distance', JSON.stringify(pl));
+    check(pl[2].current && (await mapSrc()).includes('marker=39.6761'), '"Near me" shows the nearest on the map');
+    await ntab.screenshot({ path: resolve(SHOTS, 'location-finder-desktop.png') });
+    check(nerrors.length === 0, 'no JavaScript errors from the new blocks', nerrors.join('; '));
+    await ndesk.close();
+
+    // Phone: finder map above the list, phone bar at the bottom.
+    const nphone = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const nptab = await nphone.newPage();
+    await nptab.goto(`${base}/popup-more/`, { waitUntil: 'domcontentloaded' });
+    await nptab.waitForTimeout(500);
+    const pf = await nptab.evaluate(() => {
+        const map = document.querySelector('.wp-block-anypress-location-finder__map').getBoundingClientRect();
+        const list = document.querySelector('.wp-block-anypress-location-finder__list').getBoundingClientRect();
+        const units = [...document.querySelectorAll('.wp-block-anypress-countdown:not(.is-ended) .wp-block-anypress-countdown__unit')].map((u) => u.getBoundingClientRect());
+        return { mapAbove: map.bottom <= list.top + 1, scroll: document.documentElement.scrollWidth - innerWidth, oneRow: units.every((u) => Math.abs(u.top - units[0].top) < 2), near: document.querySelector('.wp-block-anypress-location-finder__near').getBoundingClientRect().height };
+    });
+    check(pf.mapAbove, 'phone: the finder map sits above the list', JSON.stringify(pf));
+    check(pf.oneRow, 'phone: the countdown fits on one row', JSON.stringify(pf));
+    check(pf.near >= 44 && pf.scroll <= 0, 'phone: "Near me" is a full-size tap target and nothing runs off the side', JSON.stringify(pf));
+    await nptab.screenshot({ path: resolve(SHOTS, 'new-blocks-phone.png'), fullPage: true });
+
+    await nptab.goto(`${base}/popup-bar/`, { waitUntil: 'domcontentloaded' });
+    await nptab.waitForTimeout(400);
+    const pb = await nptab.evaluate(() => {
+        const bar = document.querySelector('.wp-block-anypress-phone-bar');
+        const r = bar.getBoundingClientRect();
+        const links = [...bar.querySelectorAll('a')];
+        return { bottom: innerHeight - r.bottom, visible: r.height > 0, fixed: getComputedStyle(bar).position, tel: links[0]?.getAttribute('href'), labels: links.map((a) => a.textContent.trim()), tap: Math.min(...links.map((a) => a.getBoundingClientRect().height)), pad: parseFloat(getComputedStyle(document.body).paddingBottom) };
+    });
+    check(pb.visible && pb.fixed === 'fixed' && Math.abs(pb.bottom) < 2, 'phone bar: sits at the bottom of a phone screen', JSON.stringify(pb));
+    check(pb.tel === 'tel:2175550142' && pb.labels.join() === 'Call now,Book a cake', 'phone bar: calls the Site details number and links to booking', JSON.stringify(pb));
+    check(pb.tap >= 48 && pb.pad >= 56, 'phone bar: full-size buttons, and the page is padded so it never covers the footer', JSON.stringify(pb));
+    await nptab.screenshot({ path: resolve(SHOTS, 'phone-bar-phone.png') });
+    await nphone.close();
+    const bdesk2 = await browser.newContext({ viewport: { width: 1280, height: 860 } });
+    const bd2 = await bdesk2.newPage();
+    await bd2.goto(`${base}/popup-bar/`, { waitUntil: 'domcontentloaded' });
+    check(!(await bd2.locator('.wp-block-anypress-phone-bar').isVisible()), 'phone bar: hidden on a computer when set to phones only');
+
+    // Age check.
+    await bd2.goto(`${base}/popup-age/`, { waitUntil: 'domcontentloaded' });
+    await bd2.waitForTimeout(500);
+    const ageOpen = () => bd2.$eval('.wp-block-anypress-age-check', (d) => d.open && d.matches(':modal'));
+    check(await ageOpen(), 'age check: covers the page when it loads');
+    await bd2.keyboard.press('Escape');
+    await bd2.waitForTimeout(150);
+    await bd2.keyboard.press('Escape');
+    await bd2.waitForTimeout(300);
+    check(await ageOpen(), 'age check: Escape does not get past it');
+    await bd2.click('.wp-block-anypress-age-check__no');
+    check(await bd2.locator('.wp-block-anypress-age-check__sorry').isVisible() && !(await bd2.locator('.wp-block-anypress-age-check__yes').isVisible()), 'age check: "No" says sorry and takes the buttons away');
+    await bd2.screenshot({ path: resolve(SHOTS, 'age-check-desktop.png') });
+    await bd2.reload({ waitUntil: 'domcontentloaded' });
+    await bd2.waitForTimeout(500);
+    check((await bd2.textContent('.wp-block-anypress-age-check__yes')).trim() === 'Yes, I am 21 or over', 'age check: the yes button names the age');
+    await bd2.click('.wp-block-anypress-age-check__yes');
+    await bd2.waitForTimeout(300);
+    check(!(await bd2.$eval('.wp-block-anypress-age-check', (d) => d.open)) && (await bd2.evaluate(() => getComputedStyle(document.documentElement).overflow)) !== 'hidden', 'age check: "Yes" opens the site and lets it scroll');
+    await bd2.reload({ waitUntil: 'domcontentloaded' });
+    await bd2.waitForTimeout(600);
+    check(!(await bd2.$eval('.wp-block-anypress-age-check', (d) => d.open)), 'age check: remembers "Yes" on the next visit');
+    await bdesk2.close();
+
     // Editor: the saved page stays valid.
     const ed = await browser.newContext({ viewport: { width: 1440, height: 900 } });
     const etab = await ed.newPage();
@@ -398,6 +570,26 @@ try {
         return all[all.length - 1].innerBlocks.length;
     });
     check(freshCar === 3, 'a new carousel starts with three slides to fill in', String(freshCar));
+
+    for (const slug of ['more', 'bar', 'age']) {
+        await etab.goto(`${base}/wp-admin/post.php?post=${ids[slug]}&action=edit`);
+        await etab.waitForFunction(() => window.wp?.data?.select('core/block-editor')?.getBlocks().length > 0, null, { timeout: 60000 });
+        await etab.waitForTimeout(1500);
+        const list = await etab.evaluate(() => {
+            const walk = (l) => l.flatMap((b) => [{ name: b.name, valid: b.isValid }, ...walk(b.innerBlocks)]);
+            return walk(window.wp.data.select('core/block-editor').getBlocks());
+        });
+        check(list.every((b) => b.valid) && list.some((b) => b.name.startsWith('anypress/')), `the editor loads the ${slug} page's blocks as valid`, list.filter((b) => !b.valid).map((b) => b.name).join(', '));
+        if (slug === 'more') {
+            await etab.waitForTimeout(1000);
+            const prev = await etab.evaluate(() => {
+                const doc = document.querySelector('iframe[name="editor-canvas"]')?.contentDocument || document;
+                return { stars: doc.querySelector('.wp-block-anypress-star-rating__text')?.textContent, units: doc.querySelectorAll('.wp-block-anypress-countdown__unit').length, ba: !!doc.querySelector('.wp-block-anypress-before-after__after'), places: doc.querySelectorAll('.wp-block-anypress-location-finder__place').length };
+            });
+            check(prev.stars === '4.8 out of 5 from 127 Google reviews' && prev.units === 4 && prev.ba && prev.places === 3, 'the editor previews the stars, the countdown, both photos and the locations', JSON.stringify(prev));
+            await etab.screenshot({ path: resolve(SHOTS, 'new-blocks-editor.png') });
+        }
+    }
 
     // Site details: bound blocks show the saved details, and editing one in the editor saves it for every page.
     console.log('Site details');

@@ -1,0 +1,36 @@
+/* Age Check block: a box in the middle of the screen over a dark, blurred page. Colours come from the theme's presets
+   unless the block sets its own. */
+.wp-block-anypress-age-check {
+	width: min(32rem, calc(100vw - 2rem));
+	max-height: calc(100dvh - 2rem);
+	padding: var(--wp--preset--spacing--large, 2rem);
+	border: 0;
+	border-radius: var(--wp--custom--radius--large, 12px);
+	text-align: center;
+	overflow: auto;
+}
+.wp-block-anypress-age-check:not(.has-background) { background: var(--wp--preset--color--base, #fff); }
+.wp-block-anypress-age-check:not(.has-text-color) { color: var(--wp--preset--color--main, #111); }
+.wp-block-anypress-age-check::backdrop { background: rgb(0 0 0 / 0.8); backdrop-filter: blur(10px); }
+.wp-block-anypress-age-check > :first-child { margin-top: 0; }
+.wp-block-anypress-age-check__answers {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 0.75rem;
+	margin-top: var(--wp--preset--spacing--medium, 1.5rem);
+}
+.wp-block-anypress-age-check__answers[hidden] { display: none; }
+.wp-block-anypress-age-check__answers button { min-height: 48px; cursor: pointer; }
+.wp-block-anypress-age-check__no {
+	padding: 0.6em 1.4em;
+	border: 2px solid currentColor;
+	border-radius: var(--wp--custom--radius--button, 6px);
+	background: transparent;
+	color: inherit;
+	font: inherit;
+	font-weight: 600;
+}
+.wp-block-anypress-age-check__answers button:focus-visible { outline: 3px solid currentColor; outline-offset: 2px; }
+.wp-block-anypress-age-check__sorry { margin-bottom: 0; font-weight: 600; }
+html.has-anypress-age-check { overflow: hidden; }

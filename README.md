@@ -1,6 +1,6 @@
 # AnyPress Blocks
 
-Interactive blocks for any WordPress block theme: Popup, Carousel, Counter and Map. AnyPress stores have it installed, and any WordPress site can use it.
+Interactive blocks for any WordPress block theme: Popup, Carousel, Counter, Map, Location Finder, Before and After, Countdown, Star Rating, Notice Bar, Phone Bar and Age Check. AnyPress stores have it installed, and any WordPress site can use it.
 
 ## Blocks
 
@@ -10,6 +10,15 @@ Interactive blocks for any WordPress block theme: Popup, Carousel, Counter and M
 | **Carousel** (`anypress/carousel`) | Slides that scroll sideways: reviews, projects, team or photos. Each block inside is one slide. One to four at a time on a computer, one and the edge of the next on a phone. Arrows, dots, swipe, arrow keys and optional autoplay that pauses on hover, touch, focus and reduced motion. |
 | **Counter** (`anypress/counter`) | A number that counts up when it scrolls into view, with text before or after it. The page holds the final number, so it reads right without JavaScript. |
 | **Map** (`anypress/map`) | An OpenStreetMap map of an address with a pin and a "Get directions" link. No API key. Can wait to load until the visitor asks. |
+| **Location Finder** (`anypress/location-finder`) | A list of locations beside a map. Search by town, street or zip code, or "Near me" to sort nearest first (the browser asks; nothing is sent anywhere). Picking one moves the map to it. Phone, hours, directions and a page link per location. |
+| **Before and After** (`anypress/before-after`) | Two photos with a handle to drag between them, by finger, mouse or arrow keys (a range input under the hood). |
+| **Countdown** (`anypress/countdown`) | Days, hours, minutes and seconds until a date in the site's time zone. Shows your words, or hides, when the time is up. |
+| **Star Rating** (`anypress/star-rating`) | Stars filled to a rating, with the number of reviews and where they are from, and the rating in words for screen readers. No JavaScript. |
+| **Notice Bar** (`anypress/notice-bar`) | One short message in a bar. Visitors can close it; it stays closed for the days you choose, or until the message changes. |
+| **Phone Bar** (`anypress/phone-bar`) | Call and Book buttons fixed to the bottom of the screen, on phones only or everywhere. Uses the Site details phone number by default. No JavaScript. |
+| **Age Check** (`anypress/age-check`) | A modal asking visitors to confirm their age, remembered for the days you choose. A polite check, not proof of age. |
+
+Tabs and accordions: use WordPress's own Tabs and Accordion blocks (WordPress 7.1). Two tabs make a monthly and yearly price switch.
 
 ## Site details
 

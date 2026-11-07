@@ -1,0 +1,81 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "anypress/location-finder",
+	"version": "0.4.0",
+	"title": "Location Finder",
+	"category": "embed",
+	"description": "A list of your locations next to a map: visitors search by town or zip code, or tap \"Near me\" to sort by distance, then pick one to see it on the map and get directions. For franchises, chains and businesses with several branches. Uses OpenStreetMap; no account or API key.",
+	"keywords": [
+		"locations",
+		"store locator",
+		"branches",
+		"franchise",
+		"find us",
+		"map"
+	],
+	"textdomain": "anypress-blocks",
+	"attributes": {
+		"locations": {
+			"type": "array",
+			"default": [],
+			"items": {
+				"type": "object"
+			}
+		},
+		"zoom": {
+			"type": "number",
+			"default": 14
+		},
+		"units": {
+			"type": "string",
+			"enum": [
+				"mi",
+				"km"
+			],
+			"default": "mi"
+		},
+		"search": {
+			"type": "boolean",
+			"default": true
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [
+			"wide",
+			"full"
+		],
+		"spacing": {
+			"margin": [
+				"top",
+				"bottom"
+			],
+			"blockGap": true
+		},
+		"interactivity": true
+	},
+	"example": {
+		"attributes": {
+			"locations": [
+				{
+					"name": "Downtown",
+					"address": "12 Main Street, Springfield, IL",
+					"lat": 39.8017,
+					"lon": -89.6436
+				},
+				{
+					"name": "West Side",
+					"address": "400 Wabash Avenue, Springfield, IL",
+					"lat": 39.7737,
+					"lon": -89.7112
+				}
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./editor.css",
+	"style": "file:./style.css",
+	"viewScriptModule": "file:./view.js",
+	"render": "file:./render.php"
+}
