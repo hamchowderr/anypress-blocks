@@ -65,6 +65,10 @@
 	box-shadow: 0 1px 4px rgb(0 0 0 / 0.25);
 	cursor: pointer;
 }
+/* A popup that opens with a photo: the button sits over the photo, so the photo starts at the top edge. */
+.wp-block-anypress-popup > .wp-block-anypress-popup__close:has(+ :is(.wp-block-image, .wp-block-cover, .wp-block-video, figure)) {
+	margin-bottom: calc(var(--anypress-popup-pad-top) - 3.25rem) !important;
+}
 .wp-block-anypress-popup__close:hover { background: color-mix(in srgb, var(--wp--preset--color--base, #fff) 88%, currentColor); }
 .wp-block-anypress-popup__close:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 

@@ -267,6 +267,8 @@ try {
     const flush = await corners('photo');
     check(flush.inside && flush.sideways <= 0 && flush.fromCorner.every((n) => n >= 4 && n <= 12), 'with no padding, the close button is still in the corner, inside the popup, with no sideways scroll', JSON.stringify(flush));
     check(!/rgba\(0, 0, 0, 0\)|transparent/.test(flush.background), 'the close button has its own background, so it shows over a photo', flush.background);
+    const photoTop = await tab.$eval('#photo', (d) => Math.round(d.querySelector('.wp-block-image').getBoundingClientRect().top - d.getBoundingClientRect().top));
+    check(photoTop === 0, 'a popup that opens with a photo starts the photo at the top edge, under the close button', String(photoTop));
     await tab.screenshot({ path: resolve(SHOTS, 'popup-photo.png') });
 
     // Scroll popup in the corner.
