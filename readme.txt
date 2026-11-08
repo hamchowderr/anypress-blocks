@@ -4,7 +4,7 @@ Tags: popup, carousel, store locator, before and after, countdown
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.4.0
+Stable tag: 0.4.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -103,6 +103,10 @@ Any block. Each block directly inside the carousel is one slide, so a group with
 The map is loaded from OpenStreetMap, which sees the visitor's IP address like any embedded map. Pressing "Find on the map" in the editor asks OpenStreetMap's Nominatim search for the address once. Turn on "Ask before loading the map" if visitors should agree first.
 
 == Changelog ==
+
+= 0.4.1 =
+* Fix: Popup's close button stays in the popup's corner, 0.5rem in, whatever padding the popup has. A popup with no padding (a photo running to the edges) put it partly outside the popup and made the popup scroll sideways.
+* Fix: Popup's close button has its own background, so it shows up over a photo.
 
 = 0.4.0 =
 * New: Location Finder block. A searchable list of locations beside a map, with "Near me" sorting, directions and opening hours.

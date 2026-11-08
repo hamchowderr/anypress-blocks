@@ -126,6 +126,8 @@ const button = (href, text) => `<!-- wp:buttons -->\n<div class="wp-block-button
 const pages = {
     delay: popup({ popupId: 'signup', trigger: 'delay', delay: 2, label: 'Newsletter signup' }, signup) + '\n\n' + button('#signup', 'Join the list') + '\n\n' + filler,
     click: popup({ popupId: 'order', trigger: 'click', size: 'small' }, signup) + '\n\n' + button('#order', 'Order a cake') + '\n\n' + filler,
+    // Like the theme's kit popups: no padding at the top and sides, so its photo runs to the edges.
+    photo: popup({ popupId: 'photo', trigger: 'click', label: 'Offer', style: { spacing: { padding: { top: '0', bottom: 'var:preset|spacing|large', left: '0', right: '0' } } } }, `<!-- wp:image {"aspectRatio":"16/9","scale":"cover"} -->\n<figure class="wp-block-image"><img src="/wp-includes/images/w-logo-blue.png" alt="" style="aspect-ratio:16/9;object-fit:cover;width:100%"/></figure>\n<!-- /wp:image -->\n\n${signup}`) + '\n\n' + button('#photo', 'See the offer') + '\n\n' + filler,
     scroll: popup({ popupId: 'offer', trigger: 'scroll', scroll: 60, position: 'bottom-right', size: 'small' }, signup) + '\n\n' + filler,
     blocks: [
         `<!-- wp:anypress/carousel {"perView":3,"label":"Customer reviews"} -->`,
@@ -246,6 +248,26 @@ try {
     await tab.mouse.click(10, 10);
     await tab.waitForTimeout(300);
     check(!(await tab.$eval('#order', (d) => d.open)), 'closes with a click outside it');
+
+    // Close button in the corner, inside the popup, for the default padding and for a popup with none.
+    const corners = async (id) => tab.$eval(`#${id}`, (d) => {
+        const r = d.getBoundingClientRect();
+        const b = d.querySelector('.wp-block-anypress-popup__close');
+        const c = b.getBoundingClientRect();
+        return { inside: c.left >= r.left && c.right <= r.right + 0.5 && c.top >= r.top - 0.5, fromCorner: [Math.round(r.right - c.right), Math.round(c.top - r.top)], sideways: d.scrollWidth - d.clientWidth, background: getComputedStyle(b).backgroundColor };
+    });
+    await tab.goto(`${base}/popup-click/`, { waitUntil: 'domcontentloaded' });
+    await tab.click('a[href="#order"]');
+    await tab.waitForTimeout(400);
+    const plain = await corners('order');
+    check(plain.inside && plain.sideways <= 0, 'the close button sits inside the popup, which never scrolls sideways', JSON.stringify(plain));
+    await tab.goto(`${base}/popup-photo/`, { waitUntil: 'domcontentloaded' });
+    await tab.click('a[href="#photo"]');
+    await tab.waitForTimeout(400);
+    const flush = await corners('photo');
+    check(flush.inside && flush.sideways <= 0 && flush.fromCorner.every((n) => n >= 4 && n <= 12), 'with no padding, the close button is still in the corner, inside the popup, with no sideways scroll', JSON.stringify(flush));
+    check(!/rgba\(0, 0, 0, 0\)|transparent/.test(flush.background), 'the close button has its own background, so it shows over a photo', flush.background);
+    await tab.screenshot({ path: resolve(SHOTS, 'popup-photo.png') });
 
     // Scroll popup in the corner.
     await tab.goto(`${base}/popup-scroll/`, { waitUntil: 'domcontentloaded' });
