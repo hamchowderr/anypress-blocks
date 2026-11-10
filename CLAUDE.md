@@ -16,7 +16,7 @@ Node 22+: `cd tests && npm ci && npm run check`. It must pass before pushing; CI
 
 ## Releasing
 
-Bump `Version` and `ANYPRESS_BLOCKS_VERSION` in `anypress-blocks.php`, `Stable tag` in `readme.txt` and add a changelog entry, in the same PR as the change. After merging, run the **Release** workflow (`release.yml`, GitHub `actions_run_trigger`) with the version; it tags `v<version>` and attaches `anypress-blocks.zip` and `SHA256SUMS`. Stores get a new version only when `waas-provisioning-api/templates/anypress-store` pins it (version and checksum) and a new store template version is built, published and made production.
+Bump `Version` and `ANYPRESS_BLOCKS_VERSION` in `anypress-blocks.php`, `Stable tag` in `readme.txt` and add a changelog entry, in the same PR as the change. Merging it releases it: **Release on merge** starts the **Release** workflow (`release.yml`) when the merge raises the version, and Release tags `v<version>` and attaches `anypress-blocks.zip` and `SHA256SUMS`. Stores get a new version when the API's **Update pins** workflow moves the store template's pin to it (within the hour) and a new store template version is built, published and made production.
 
 ## Building for WordPress
 
