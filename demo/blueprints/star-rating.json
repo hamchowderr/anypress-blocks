@@ -18,21 +18,28 @@
 			"step": "installTheme",
 			"themeData": {
 				"resource": "url",
-				"url": "https://github.com/hamchowderr/anypress-theme/releases/latest/download/anypress.zip"
+				"url": "https://api.anypress.io/branding/demo-files/anypress-theme.zip"
 			},
 			"options": {
 				"activate": true,
 				"targetFolderName": "anypress"
+			},
+			"progress": {
+				"caption": "Setting up the design"
 			}
 		},
 		{
 			"step": "installPlugin",
 			"pluginData": {
 				"resource": "url",
-				"url": "https://github.com/hamchowderr/anypress-blocks/releases/latest/download/anypress-blocks.zip"
+				"url": "https://api.anypress.io/branding/demo-files/anypress-blocks.zip"
 			},
 			"options": {
-				"activate": true
+				"activate": true,
+				"targetFolderName": "anypress-blocks"
+			},
+			"progress": {
+				"caption": "Adding AnyPress Blocks"
 			}
 		},
 		{
@@ -43,22 +50,54 @@
 			},
 			"options": {
 				"activate": true
+			},
+			"progress": {
+				"caption": "Adding the forms"
 			}
 		},
 		{
-			"step": "writeFiles",
-			"writeToPath": "/wordpress/wp-content/anypress-blocks-demo",
-			"filesTree": {
-				"resource": "git:directory",
-				"url": "https://github.com/hamchowderr/anypress-blocks",
-				"ref": "main",
-				"refType": "branch",
-				"path": "demo"
+			"step": "mkdir",
+			"path": "/wordpress/wp-content/anypress-blocks-demo"
+		},
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/anypress-blocks-demo/build.php",
+			"data": {
+				"resource": "url",
+				"url": "https://raw.githubusercontent.com/hamchowderr/anypress-blocks/main/demo/build.php"
+			},
+			"progress": {
+				"caption": "Writing the example pages"
+			}
+		},
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/anypress-blocks-demo/path-before.jpg",
+			"data": {
+				"resource": "url",
+				"url": "https://raw.githubusercontent.com/hamchowderr/anypress-blocks/main/demo/path-before.jpg"
+			},
+			"progress": {
+				"caption": "Writing the example pages"
+			}
+		},
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/anypress-blocks-demo/path-after.jpg",
+			"data": {
+				"resource": "url",
+				"url": "https://raw.githubusercontent.com/hamchowderr/anypress-blocks/main/demo/path-after.jpg"
+			},
+			"progress": {
+				"caption": "Writing the example pages"
 			}
 		},
 		{
 			"step": "runPHP",
-			"code": "<?php require '/wordpress/wp-load.php'; require WP_CONTENT_DIR . '/anypress-blocks-demo/build.php';"
+			"code": "<?php require '/wordpress/wp-load.php'; require WP_CONTENT_DIR . '/anypress-blocks-demo/build.php';",
+			"progress": {
+				"caption": "Building the example pages"
+			}
 		}
 	]
 }
