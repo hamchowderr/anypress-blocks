@@ -67,3 +67,5 @@ npm run serve   # the same site left running at http://127.0.0.1:9420 (admin / p
 ## Licence
 
 GPL-3.0-or-later.
+
+The wordpress.org listing's icon and banner images are in `.wordpress-org/` (they go in the plugin's SVN `assets` folder, not the zip).
