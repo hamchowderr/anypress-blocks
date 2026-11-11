@@ -1,10 +1,10 @@
 === AnyPress Blocks ===
-Contributors: anypress
+Contributors: otakusolutions
 Tags: popup, carousel, store locator, before and after, countdown
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.4.2
+Stable tag: 0.4.3
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -112,6 +112,9 @@ The Map and Location Finder blocks use OpenStreetMap. Nothing is sent until a pa
 * "Near me" in the Location Finder uses the browser's own location feature. The position stays on the visitor's device and is not sent anywhere.
 
 == Changelog ==
+
+= 0.4.3 =
+* Every PHP file, the blocks manifest included, now stops when opened directly, as wordpress.org asks.
 
 = 0.4.2 =
 * Fix: A popup that opens with a photo starts the photo at its top edge, with the close button over it, instead of leaving a blank strip above it.
