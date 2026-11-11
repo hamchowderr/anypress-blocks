@@ -102,6 +102,15 @@ Any block. Each block directly inside the carousel is one slide, so a group with
 
 The map is loaded from OpenStreetMap, which sees the visitor's IP address like any embedded map. Pressing "Find on the map" in the editor asks OpenStreetMap's Nominatim search for the address once. Turn on "Ask before loading the map" if visitors should agree first.
 
+== External services ==
+
+The Map and Location Finder blocks use OpenStreetMap. Nothing is sent until a page with one of these blocks is shown, or, for a Map block with "Ask before loading the map" on, until the visitor asks for the map.
+
+* The map is OpenStreetMap's embedded map (www.openstreetmap.org/export/embed.html) in a frame, which loads its map tiles from OpenStreetMap's tile servers. The visitor's browser sends its IP address and browser details to OpenStreetMap when the map loads. [Terms of use](https://wiki.osmfoundation.org/wiki/Terms_of_Use), [tile usage policy](https://operations.osmfoundation.org/policies/tiles/), [privacy policy](https://osmfoundation.org/wiki/Privacy_Policy).
+* In the editor, pressing "Find on the map" sends the address typed into the block to OpenStreetMap's Nominatim search (nominatim.openstreetmap.org) once, to find its position. Visitors' browsers never call it. [Nominatim usage policy](https://operations.osmfoundation.org/policies/nominatim/), [privacy policy](https://osmfoundation.org/wiki/Privacy_Policy).
+* The "Get directions" links open Google Maps directions to the address in a new tab, only when the visitor clicks one. Nothing is sent before that. [Google terms](https://policies.google.com/terms), [privacy policy](https://policies.google.com/privacy).
+* "Near me" in the Location Finder uses the browser's own location feature. The position stays on the visitor's device and is not sent anywhere.
+
 == Changelog ==
 
 = 0.4.2 =
