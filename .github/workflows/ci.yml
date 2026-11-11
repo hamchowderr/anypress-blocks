@@ -61,3 +61,5 @@ jobs:
         with:
           build-dir: build/anypress-blocks
           ignore-warnings: false
+          # Warnings fail too: the wordpress.org reviewers read every one.
+          strict: true
