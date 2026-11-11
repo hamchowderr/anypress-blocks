@@ -17,9 +17,10 @@ $anypress_blocks_age_min = max( 13, min( 25, (int) ( $attributes['minAge'] ?? 21
 /* translators: %d: the minimum age, such as 21. */
 $anypress_blocks_age_yes = '' !== ( $attributes['yesLabel'] ?? '' ) ? $attributes['yesLabel'] : sprintf( __( 'Yes, I am %d or over', 'anypress-blocks' ), $anypress_blocks_age_min );
 $anypress_blocks_age_no  = '' !== ( $attributes['noLabel'] ?? '' ) ? $attributes['noLabel'] : __( 'No', 'anypress-blocks' );
-if ( '' === trim( wp_strip_all_tags( $content ) ) ) {
+$anypress_blocks_age_body = $content;
+if ( '' === trim( wp_strip_all_tags( $anypress_blocks_age_body ) ) ) {
 	/* translators: %d: the minimum age, such as 21. */
-	$content = '<h2 class="wp-block-heading">' . esc_html( sprintf( __( 'Are you %d or over?', 'anypress-blocks' ), $anypress_blocks_age_min ) ) . '</h2>';
+	$anypress_blocks_age_body = '<h2 class="wp-block-heading">' . esc_html( sprintf( __( 'Are you %d or over?', 'anypress-blocks' ), $anypress_blocks_age_min ) ) . '</h2>';
 }
 
 $anypress_blocks_age_wrapper = get_block_wrapper_attributes(
@@ -41,7 +42,7 @@ $anypress_blocks_age_wrapper = get_block_wrapper_attributes(
 );
 ?>
 <dialog <?php echo $anypress_blocks_age_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by get_block_wrapper_attributes(). ?>>
-	<?php echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- rendered inner blocks. ?>
+	<?php echo $anypress_blocks_age_body; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- rendered inner blocks. ?>
 	<div class="wp-block-anypress-age-check__answers">
 		<button type="button" class="wp-block-anypress-age-check__yes wp-element-button" data-wp-on--click="actions.yes"><?php echo esc_html( $anypress_blocks_age_yes ); ?></button>
 		<button type="button" class="wp-block-anypress-age-check__no" data-wp-on--click="actions.no"><?php echo esc_html( $anypress_blocks_age_no ); ?></button>
