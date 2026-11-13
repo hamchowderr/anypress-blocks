@@ -22,8 +22,26 @@ $anypress_blocks_popup_size     = in_array( $attributes['size'] ?? '', array( 's
 $anypress_blocks_popup_position = in_array( $attributes['position'] ?? '', array( 'center', 'bottom-right', 'bottom-left' ), true ) ? $attributes['position'] : 'center';
 $anypress_blocks_popup_label    = '' !== ( $attributes['label'] ?? '' ) ? $attributes['label'] : __( 'Popup', 'anypress-blocks' );
 
+// The close button sits 0.5rem from the popup's corner, so style.css needs the popup's own top and right padding.
+$anypress_blocks_popup_vars = '';
+foreach ( array( 'top', 'right' ) as $anypress_blocks_popup_side ) {
+	$anypress_blocks_popup_pad = $attributes['style']['spacing']['padding'][ $anypress_blocks_popup_side ] ?? null;
+	if ( ! is_string( $anypress_blocks_popup_pad ) || '' === $anypress_blocks_popup_pad ) {
+		continue;
+	}
+	if ( 0 === strpos( $anypress_blocks_popup_pad, 'var:preset|spacing|' ) ) {
+		$anypress_blocks_popup_pad = 'var(--wp--preset--spacing--' . sanitize_key( substr( $anypress_blocks_popup_pad, 19 ) ) . ')';
+	} elseif ( is_numeric( $anypress_blocks_popup_pad ) ) {
+		$anypress_blocks_popup_pad = ( (float) $anypress_blocks_popup_pad ) . 'px';
+	} elseif ( ! preg_match( '/^[0-9.]+(px|rem|em|%|vw|vh)$|^(calc|clamp|min|max|var)\([a-z0-9 .,%+*\/()_-]+\)$/i', $anypress_blocks_popup_pad ) ) {
+		continue;
+	}
+	$anypress_blocks_popup_vars .= "--anypress-popup-pad-{$anypress_blocks_popup_side}:{$anypress_blocks_popup_pad};";
+}
+
 $anypress_blocks_popup_wrapper = get_block_wrapper_attributes(
 	array(
+		'style'                    => $anypress_blocks_popup_vars,
 		'id'                       => $anypress_blocks_popup_id,
 		'class'                    => "is-size-{$anypress_blocks_popup_size} is-position-{$anypress_blocks_popup_position}",
 		'aria-label'               => $anypress_blocks_popup_label,

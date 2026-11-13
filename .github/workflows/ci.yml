@@ -42,3 +42,24 @@ jobs:
           path: |
             dist/anypress-blocks.zip
             tests/shots/
+
+  plugin-check:
+    # The same Plugin Check wordpress.org runs on a submission: every category, the directory checks
+    # (plugin_repo) included and nothing excluded, on the zip the release builds.
+    name: Plugin Check for wordpress.org
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the zip
+        run: |
+          bin/build-zip.sh
+          mkdir -p build
+          unzip -q dist/anypress-blocks.zip -d build
+      - name: Plugin Check (every category)
+        uses: WordPress/plugin-check-action@v1
+        with:
+          build-dir: build/anypress-blocks
+          ignore-warnings: false
+          # Warnings fail too: the wordpress.org reviewers read every one.
+          strict: true

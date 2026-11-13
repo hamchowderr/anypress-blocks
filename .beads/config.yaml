@@ -1,0 +1,6 @@
+sync:
+    remote: chowderr/anypress_blocks
+export:
+    auto: true
+    git-add: false
+

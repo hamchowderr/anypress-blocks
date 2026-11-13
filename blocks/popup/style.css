@@ -4,14 +4,18 @@
    rules for blocks in a column (content width, auto side margins, gaps), which don't apply to a popup. */
 .wp-block-anypress-popup.wp-block-anypress-popup {
 	--anypress-popup-width: 34rem;
+	/* The popup's top and right padding: render.php sets these to the block's own padding when it has one, so the
+	   close button can sit in the corner whatever the padding is. */
+	--anypress-popup-pad-top: var(--wp--preset--spacing--large, 2.5rem);
+	--anypress-popup-pad-right: var(--wp--preset--spacing--medium, 2rem);
 	box-sizing: border-box;
 	width: min(calc(100% - 2rem), var(--anypress-popup-width));
 	max-width: none;
 	max-height: calc(100dvh - 2rem);
-	overflow: auto;
+	overflow: hidden auto;
 	margin: auto !important;
 	border: 0;
-	padding: var(--wp--preset--spacing--large, 2.5rem) var(--wp--preset--spacing--medium, 2rem);
+	padding: var(--anypress-popup-pad-top) var(--anypress-popup-pad-right);
 	border-radius: var(--wp--preset--border-radius--lg, 1rem);
 	background-color: var(--wp--preset--color--base, #fff);
 	color: var(--wp--preset--color--main, #111);
@@ -40,14 +44,15 @@
 }
 .wp-block-anypress-popup.wp-block-anypress-popup.is-position-bottom-left[open] { inset: auto auto 1rem 1rem; }
 
-/* The close button floats in the top corner, so the first lines of text wrap around it instead of running under it,
-   and it stays in view (sticky) when a long popup scrolls. */
+/* The close button floats in the top corner, 0.5rem in from the popup's edge whatever its padding, so the first lines
+   of text wrap around it instead of running under it, and it stays in view (sticky) when a long popup scrolls. It has
+   its own background, so it shows up over a photo as well as over the popup's colour. */
 .wp-block-anypress-popup__close {
 	position: sticky;
-	top: 0;
+	top: 0.5rem;
 	float: right;
 	z-index: 1;
-	margin: calc(0.5rem - var(--wp--preset--spacing--large, 2.5rem)) calc(0.5rem - var(--wp--preset--spacing--medium, 2rem)) 0.25rem 0.5rem !important;
+	margin: calc(0.5rem - var(--anypress-popup-pad-top)) calc(0.5rem - var(--anypress-popup-pad-right)) 0.25rem 0.5rem !important;
 	display: grid;
 	place-items: center;
 	width: 2.75rem;
@@ -55,11 +60,16 @@
 	padding: 0;
 	border: 0;
 	border-radius: 50%;
-	background: transparent;
-	color: inherit;
+	background: var(--wp--preset--color--base, #fff);
+	color: var(--wp--preset--color--main, #111);
+	box-shadow: 0 1px 4px rgb(0 0 0 / 0.25);
 	cursor: pointer;
 }
-.wp-block-anypress-popup__close:hover { background: color-mix(in srgb, currentColor 10%, transparent); }
+/* A popup that opens with a photo: the button sits over the photo, so the photo starts at the top edge. */
+.wp-block-anypress-popup > .wp-block-anypress-popup__close:has(+ :is(.wp-block-image, .wp-block-cover, .wp-block-video, figure)) {
+	margin-bottom: calc(var(--anypress-popup-pad-top) - 3.25rem) !important;
+}
+.wp-block-anypress-popup__close:hover { background: color-mix(in srgb, var(--wp--preset--color--base, #fff) 88%, currentColor); }
 .wp-block-anypress-popup__close:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 
 /* Images inside run to the popup's edge when they're the first block. */

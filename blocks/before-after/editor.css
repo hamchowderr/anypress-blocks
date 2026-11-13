@@ -1,0 +1,2 @@
+.wp-block-anypress-before-after .components-placeholder { min-height: 200px; }
+.wp-block-anypress-before-after__pick { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }

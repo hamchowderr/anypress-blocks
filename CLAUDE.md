@@ -16,7 +16,7 @@ Node 22+: `cd tests && npm ci && npm run check`. It must pass before pushing; CI
 
 ## Releasing
 
-Bump `Version` and `ANYPRESS_BLOCKS_VERSION` in `anypress-blocks.php`, `Stable tag` in `readme.txt` and add a changelog entry, in the same PR as the change. After merging, run the **Release** workflow (`release.yml`, GitHub `actions_run_trigger`) with the version; it tags `v<version>` and attaches `anypress-blocks.zip` and `SHA256SUMS`. Stores get a new version only when `waas-provisioning-api/templates/anypress-store` pins it (version and checksum) and a new store template version is built, published and made production.
+Bump `Version` and `ANYPRESS_BLOCKS_VERSION` in `anypress-blocks.php`, `Stable tag` in `readme.txt` and add a changelog entry, in the same PR as the change. Merging it releases it: **Release on merge** starts the **Release** workflow (`release.yml`) when the merge raises the version, and Release tags `v<version>` and attaches `anypress-blocks.zip` and `SHA256SUMS`. Stores get a new version when the API's **Update pins** workflow moves the store template's pin to it (within the hour) and a new store template version is built, published and made production.
 
 ## Building for WordPress
 
@@ -24,8 +24,9 @@ Use the WordPress skills in `.claude/skills/` (list in its README): `wp-block-de
 
 ## Rules for every change
 
-- **Beads, every time.** Each piece of work gets a Beads issue before it starts (check for a duplicate first). Put the id in the branch, the PR and the status, and close the issue when the PR merges or the change is live. Run `bd` in the session doing the work; the SessionStart hook in `.claude/settings.json` loads the Dolt login, then `bd dolt push` syncs it. This repository's issues are in DoltHub `chowderr/waas_api` (ids `waas-api-*`; run `bd` from a waas-provisioning-api checkout).
+- **Beads, every time.** Each piece of work gets a Beads issue in the list of the repository it changes, before it starts (check for a duplicate first). Put the id in the branch, the PR and the status, and close the issue when the PR merges or the change is live. Run `bd` in the session doing the work; the SessionStart hook in `.claude/settings.json` loads the Dolt login and sets up `.beads` from DoltHub, then `bd dolt push` syncs it. This repository's issues are in DoltHub `chowderr/anypress_blocks` (new ids `blocks-*`; issues moved here from another list keep their old ids). Each AnyPress repository has its own list. Work that also changes another repository gets an `also:<repo>` label (`api`, `plugins`, `dashboard`, `site`, `theme`, `blocks`, `fluentsuite`), and a task whose epic is in another list gets `epic:<id>`. Jobs that change no code (accounts, outreach, server and shop settings) go in AnyPress Ops (`chowderr/anypress_ops`, in the obsidian-vault repository under `1. Projects/WaaS/AnyPress Ops/`).
 - **Pull requests:** open them ready for review, not as drafts, so CI runs. Merge a PR yourself once CI is green and the work was asked for.
 - **No "WPCS" wording.** The old platform is gone. Say "the AnyPress API" or "the API's key and secret login". Don't add the word anywhere.
 - **Public docs are for users.** READMEs and `readme.txt` explain how to use the plugin. Internal notes (server and Coolify ids, Beads, deployment steps) go in the obsidian-vault repository under `1. Projects/WaaS/`. Never put how or why AnyPress started in public copy.
+- **Official SDKs, always.** Call every outside service through its official SDK or library and configure it to fit (custom storage, base URL, options), rather than writing the HTTP calls by hand. Read the SDK's options before deciding it doesn't fit. Only where no official SDK exists, write the client yourself and say so in the PR.
 - **Verify before claiming.** Check npm, wordpress.org or the official docs before calling a version or spec "the latest", and check a fix on the running system before calling it fixed.

@@ -1,0 +1,2 @@
+/* In the editor the age check is shown in place as a framed box. */
+.editor-styles-wrapper .wp-block-anypress-age-check { display: block; position: relative; margin-inline: auto; box-shadow: 0 0 0 1px rgb(0 0 0 / 0.15), 0 8px 24px rgb(0 0 0 / 0.12); }

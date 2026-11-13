@@ -1,0 +1,74 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "anypress/notice-bar",
+	"version": "0.4.0",
+	"title": "Notice Bar",
+	"category": "design",
+	"description": "A thin bar for one short message, such as holiday hours, free delivery or a new location, with an optional link. Visitors can close it, and it stays closed until the message changes.",
+	"keywords": [
+		"notice",
+		"announcement",
+		"banner",
+		"bar",
+		"alert",
+		"top bar"
+	],
+	"textdomain": "anypress-blocks",
+	"attributes": {
+		"noticeId": {
+			"type": "string",
+			"default": ""
+		},
+		"dismissible": {
+			"type": "boolean",
+			"default": true
+		},
+		"showAgainDays": {
+			"type": "number",
+			"default": 30
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [
+			"wide",
+			"full"
+		],
+		"color": {
+			"background": true,
+			"text": true,
+			"link": true
+		},
+		"spacing": {
+			"padding": true
+		},
+		"typography": {
+			"fontSize": true
+		},
+		"layout": {
+			"default": {
+				"type": "flex",
+				"justifyContent": "center",
+				"flexWrap": "wrap"
+			},
+			"allowSwitching": false,
+			"allowOrientation": false
+		},
+		"interactivity": true
+	},
+	"example": {
+		"innerBlocks": [
+			{
+				"name": "core/paragraph",
+				"attributes": {
+					"content": "Closed 24 to 26 December. Orders placed now arrive from 2 January."
+				}
+			}
+		]
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style.css",
+	"viewScriptModule": "file:./view.js",
+	"render": "file:./render.php"
+}

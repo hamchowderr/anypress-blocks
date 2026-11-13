@@ -1,0 +1,46 @@
+/* Phone Bar block: fixed to the bottom of the screen, above the phone's home bar, with the page padded so the bar never
+   covers the footer. Call uses the theme's button style; Book is an outlined button in the bar's text colour. */
+.wp-block-anypress-phone-bar {
+	position: fixed;
+	inset: auto 0 0;
+	z-index: 90;
+	display: grid;
+	grid-auto-columns: 1fr;
+	grid-auto-flow: column;
+	gap: 0.5rem;
+	margin: 0 !important;
+	padding: 0.5rem 0.75rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
+	background: var(--wp--preset--color--base, #fff);
+	color: var(--wp--preset--color--main, #111);
+	border-top: 1px solid var(--wp--preset--color--border-light, rgb(0 0 0 / 0.12));
+	box-shadow: 0 -4px 16px rgb(0 0 0 / 0.08);
+}
+.wp-block-anypress-phone-bar > a {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	min-height: 48px;
+	margin: 0;
+	padding: 0.5rem 1rem;
+	font-weight: 600;
+	line-height: 1.2;
+	text-align: center;
+	text-decoration: none;
+}
+.wp-block-anypress-phone-bar__book {
+	border: 2px solid currentColor;
+	border-radius: var(--wp--custom--radius--button, 6px);
+	color: inherit;
+}
+.wp-block-anypress-phone-bar > a:focus-visible { outline: 3px solid currentColor; outline-offset: 2px; }
+.wp-block-anypress-phone-bar svg { flex: none; }
+
+body:has(.wp-block-anypress-phone-bar:not(.is-phones-only)) { padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px)); }
+@media (max-width: 781px) {
+	body:has(.wp-block-anypress-phone-bar.is-phones-only) { padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px)); }
+}
+@media (min-width: 782px) {
+	.wp-block-anypress-phone-bar.is-phones-only { display: none; }
+	.wp-block-anypress-phone-bar:not(.is-phones-only) { inset-inline: auto 1.5rem; bottom: 1.5rem; padding: 0.5rem; border: 1px solid var(--wp--preset--color--border-light, rgb(0 0 0 / 0.12)); border-radius: 12px; }
+}
