@@ -98,6 +98,40 @@
 			"progress": {
 				"caption": "Building the example pages"
 			}
+		},
+		{
+			"step": "mkdir",
+			"path": "/wordpress/wp-content/plugins/anypress-client-data"
+		},
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/plugins/anypress-client-data/roles.json",
+			"data": {
+				"resource": "url",
+				"url": "https://raw.githubusercontent.com/hamchowderr/waas-provisioning-api/main/templates/anypress-store/roles.json"
+			},
+			"progress": {
+				"caption": "Setting up wp-admin"
+			}
+		},
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/mu-plugins/0-anypress-store-env.php",
+			"data": "<?php putenv('ANYPRESS_IS_TENANT=true'); define('ANYPRESS_TENANT_ROLES', 'website');"
+		},
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "url",
+				"url": "https://api.anypress.io/branding/demo-files/anypress-client.zip"
+			},
+			"options": {
+				"activate": true,
+				"targetFolderName": "anypress-client"
+			},
+			"progress": {
+				"caption": "Setting up wp-admin"
+			}
 		}
 	]
 }
