@@ -1,0 +1,63 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "anypress/countdown",
+	"version": "0.4.0",
+	"title": "Countdown",
+	"category": "widgets",
+	"description": "Days, hours, minutes and seconds left until a date: an offer ending, an event starting, a menu changing. Shows your own words, or nothing, once the time is up.",
+	"keywords": [
+		"countdown",
+		"timer",
+		"offer",
+		"sale",
+		"event",
+		"deadline"
+	],
+	"textdomain": "anypress-blocks",
+	"attributes": {
+		"date": {
+			"type": "string",
+			"default": ""
+		},
+		"endText": {
+			"type": "string",
+			"default": ""
+		},
+		"showSeconds": {
+			"type": "boolean",
+			"default": true
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [
+			"wide",
+			"full"
+		],
+		"color": {
+			"text": true,
+			"background": true
+		},
+		"typography": {
+			"fontSize": true
+		},
+		"spacing": {
+			"margin": [
+				"top",
+				"bottom"
+			],
+			"padding": true
+		},
+		"interactivity": true
+	},
+	"example": {
+		"attributes": {
+			"date": "2030-01-01T09:00:00"
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style.css",
+	"viewScriptModule": "file:./view.js",
+	"render": "file:./render.php"
+}

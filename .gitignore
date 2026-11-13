@@ -1,3 +1,6 @@
 node_modules/
 dist/
 tests/shots/
+
+# Beads lock files
+*.gate.lock*

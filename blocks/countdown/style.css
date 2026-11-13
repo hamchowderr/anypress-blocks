@@ -1,0 +1,32 @@
+/* Countdown block: one box per unit, the number big and the unit name small under it. Digits keep the same width so the
+   line doesn't jump each second. */
+.wp-block-anypress-countdown__units {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--wp--preset--spacing--small, 1rem);
+}
+.wp-block-anypress-countdown.has-text-align-center .wp-block-anypress-countdown__units,
+.wp-block-anypress-countdown.aligncenter .wp-block-anypress-countdown__units { justify-content: center; }
+.wp-block-anypress-countdown__unit {
+	display: grid;
+	justify-items: center;
+	min-width: 4.5em;
+	padding: 0.6em 0.5em;
+	border: 1px solid var(--wp--preset--color--border-light, color-mix(in srgb, currentColor 20%, transparent));
+	border-radius: var(--wp--custom--radius--medium, 8px);
+}
+.wp-block-anypress-countdown__value {
+	font-size: 2em;
+	font-weight: 700;
+	line-height: 1.1;
+	font-variant-numeric: tabular-nums;
+}
+.wp-block-anypress-countdown__label { font-size: 0.8em; }
+.wp-block-anypress-countdown__ended { display: none; margin: 0; }
+.wp-block-anypress-countdown.is-ended .wp-block-anypress-countdown__units { display: none; }
+.wp-block-anypress-countdown.is-ended .wp-block-anypress-countdown__ended { display: block; }
+@media (max-width: 599px) {
+	.wp-block-anypress-countdown__units { gap: 0.5rem; }
+	.wp-block-anypress-countdown__unit { min-width: 0; flex: 1 1 0; padding-inline: 0.25em; }
+	.wp-block-anypress-countdown__value { font-size: 1.6em; }
+}

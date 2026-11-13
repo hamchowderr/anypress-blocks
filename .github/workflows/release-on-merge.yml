@@ -1,0 +1,29 @@
+name: Release on merge
+# A merge to main that raises the version (anypress-blocks.php) starts the Release workflow for it, so nothing sits merged and
+# unreleased. A run started with the workflow's token is allowed to start another workflow only through
+# workflow_dispatch, which is what Release offers.
+on:
+  push:
+    branches: [main]
+    paths: ['anypress-blocks.php']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(sed -n 's/^ \* Version: *//p' anypress-blocks.php | head -1 | tr -d '\r')
+          if gh api "repos/$GITHUB_REPOSITORY/releases/tags/v$VERSION" >/dev/null 2>&1; then
+            echo "v$VERSION is already released"
+          else
+            gh workflow run release.yml --ref main -f version="$VERSION"
+            echo "Started the release of v$VERSION" >> "$GITHUB_STEP_SUMMARY"
+          fi

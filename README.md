@@ -1,6 +1,6 @@
 # AnyPress Blocks
 
-Interactive blocks for any WordPress block theme: Popup, Carousel, Counter and Map. AnyPress stores have it installed, and any WordPress site can use it.
+Interactive blocks for any WordPress block theme: Popup, Carousel, Counter, Map, Location Finder, Before and After, Countdown, Star Rating, Notice Bar, Phone Bar and Age Check. AnyPress stores have it installed, and any WordPress site can use it.
 
 ## Blocks
 
@@ -10,6 +10,15 @@ Interactive blocks for any WordPress block theme: Popup, Carousel, Counter and M
 | **Carousel** (`anypress/carousel`) | Slides that scroll sideways: reviews, projects, team or photos. Each block inside is one slide. One to four at a time on a computer, one and the edge of the next on a phone. Arrows, dots, swipe, arrow keys and optional autoplay that pauses on hover, touch, focus and reduced motion. |
 | **Counter** (`anypress/counter`) | A number that counts up when it scrolls into view, with text before or after it. The page holds the final number, so it reads right without JavaScript. |
 | **Map** (`anypress/map`) | An OpenStreetMap map of an address with a pin and a "Get directions" link. No API key. Can wait to load until the visitor asks. |
+| **Location Finder** (`anypress/location-finder`) | A list of locations beside a map. Search by town, street or zip code, or "Near me" to sort nearest first (the browser asks; nothing is sent anywhere). Picking one moves the map to it. Phone, hours, directions and a page link per location. |
+| **Before and After** (`anypress/before-after`) | Two photos with a handle to drag between them, by finger, mouse or arrow keys (a range input under the hood). |
+| **Countdown** (`anypress/countdown`) | Days, hours, minutes and seconds until a date in the site's time zone. Shows your words, or hides, when the time is up. |
+| **Star Rating** (`anypress/star-rating`) | Stars filled to a rating, with the number of reviews and where they are from, and the rating in words for screen readers. No JavaScript. |
+| **Notice Bar** (`anypress/notice-bar`) | One short message in a bar. Visitors can close it; it stays closed for the days you choose, or until the message changes. |
+| **Phone Bar** (`anypress/phone-bar`) | Call and Book buttons fixed to the bottom of the screen, on phones only or everywhere. Uses the Site details phone number by default. No JavaScript. |
+| **Age Check** (`anypress/age-check`) | A modal asking visitors to confirm their age, remembered for the days you choose. A polite check, not proof of age. |
+
+Tabs and accordions: use WordPress's own Tabs and Accordion blocks (WordPress 7.1). Two tabs make a monthly and yearly price switch.
 
 ## Site details
 
@@ -22,6 +31,15 @@ Keep the business name, phone, email, address and opening hours in one place, an
 ```
 
 Keys: `name` (falls back to the site title), `phone`, `email`, `address`, `hours`, for button links `phone_link` (`tel:`) and `email_link` (`mailto:`), and for text that should stay a link `phone_linked` and `email_linked` (the number or address, linked to call or write). A detail that is not set yet leaves the block's own text in place. In the editor, pick a detail from the block's Attributes panel, and type straight into the block to change it: every page that shows it updates.
+
+## Try it
+
+Every block opens on its own page in WordPress Playground, in your browser, with nothing to install:
+
+- All the blocks: https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/hamchowderr/anypress-blocks/main/demo/blueprint.json
+- One block: `https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/hamchowderr/anypress-blocks/main/demo/blueprints/<block>.json`, for example `carousel` or `before-after`
+
+The demo uses the latest releases of AnyPress Blocks and the AnyPress theme, with Fluent Forms for the popup's signup form. `demo/build.php` makes the pages; it is not part of the plugin. Every file the Blueprints load comes from an address any site can read, so they also run on a copy of Playground without a download helper of its own; a new file in `demo/` needs its own `writeFile` step in each Blueprint.
 
 ## Install
 
@@ -49,3 +67,5 @@ npm run serve   # the same site left running at http://127.0.0.1:9420 (admin / p
 ## Licence
 
 GPL-3.0-or-later.
+
+The wordpress.org listing's icon and banner images are in `.wordpress-org/` (they go in the plugin's SVN `assets` folder, not the zip).

@@ -1,0 +1,86 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "anypress/before-after",
+	"version": "0.4.0",
+	"title": "Before and After",
+	"category": "media",
+	"description": "Two photos of the same job, one over the other, with a handle visitors drag to compare: a kitchen refit, a lawn, a haircut, a repaired roof. Works with a finger, a mouse and the arrow keys.",
+	"keywords": [
+		"before and after",
+		"compare",
+		"slider",
+		"photos",
+		"project",
+		"results"
+	],
+	"textdomain": "anypress-blocks",
+	"attributes": {
+		"beforeId": {
+			"type": "number"
+		},
+		"beforeUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"beforeAlt": {
+			"type": "string",
+			"default": ""
+		},
+		"afterId": {
+			"type": "number"
+		},
+		"afterUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"afterAlt": {
+			"type": "string",
+			"default": ""
+		},
+		"beforeLabel": {
+			"type": "string",
+			"default": ""
+		},
+		"afterLabel": {
+			"type": "string",
+			"default": ""
+		},
+		"start": {
+			"type": "number",
+			"default": 50
+		},
+		"aspect": {
+			"type": "string",
+			"enum": [
+				"16/9",
+				"4/3",
+				"1/1",
+				"3/4"
+			],
+			"default": "4/3"
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [
+			"wide",
+			"full"
+		],
+		"spacing": {
+			"margin": [
+				"top",
+				"bottom"
+			]
+		},
+		"__experimentalBorder": {
+			"radius": true
+		},
+		"interactivity": true
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./editor.css",
+	"style": "file:./style.css",
+	"viewScriptModule": "file:./view.js",
+	"render": "file:./render.php"
+}

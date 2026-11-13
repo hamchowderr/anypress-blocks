@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       AnyPress Blocks
  * Plugin URI:        https://anypress.io/blocks
- * Description:       Interactive blocks for any block theme: a Popup for signups, offers and booking forms, a Carousel for reviews and projects, a Counter that counts up, and a Map of your address.
- * Version:           0.3.0
+ * Description:       Interactive blocks for any block theme: Popup, Carousel, Counter, Map, Location Finder, Before and After, Countdown, Star Rating, Notice Bar, Phone Bar and Age Check.
+ * Version:           0.4.3
  * Requires at least: 6.8
  * Requires PHP:      7.4
  * Author:            AnyPress
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'ANYPRESS_BLOCKS_VERSION', '0.3.0' );
+define( 'ANYPRESS_BLOCKS_VERSION', '0.4.3' );
 
 /**
  * Registers every block in blocks/ from blocks-manifest.php, the blocks' block.json files in one array (bin/build-manifest.php),

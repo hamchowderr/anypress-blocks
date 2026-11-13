@@ -1,0 +1,90 @@
+/* Location Finder block: the list beside the map on a computer (list on the left, scrolling on its own), the map on top
+   and the list under it on a phone. Colours and corners come from the theme's presets with plain fallbacks. */
+.wp-block-anypress-location-finder {
+	display: grid;
+	grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+	gap: var(--wp--style--block-gap, 1.5rem);
+	align-items: stretch;
+}
+.wp-block-anypress-location-finder__panel { display: flex; flex-direction: column; gap: 0.75rem; min-width: 0; max-height: 36rem; }
+.wp-block-anypress-location-finder__search label { display: block; margin-bottom: 0.35rem; font-weight: 600; }
+.wp-block-anypress-location-finder__fields { display: flex; gap: 0.5rem; }
+.wp-block-anypress-location-finder__fields input {
+	flex: 1;
+	min-width: 0;
+	min-height: 48px;
+	padding: 0.5rem 0.75rem;
+	border: 1px solid var(--wp--preset--color--border-dark, currentColor);
+	border-radius: var(--wp--custom--radius--small, 6px);
+	background: var(--wp--preset--color--base, #fff);
+	color: inherit;
+	font: inherit;
+}
+.wp-block-anypress-location-finder__near {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	min-height: 48px;
+	padding: 0.5rem 0.9rem;
+	border: 2px solid currentColor;
+	border-radius: var(--wp--custom--radius--small, 6px);
+	background: transparent;
+	color: inherit;
+	font: inherit;
+	font-weight: 600;
+	white-space: nowrap;
+	cursor: pointer;
+}
+.wp-block-anypress-location-finder__fields input:focus-visible,
+.wp-block-anypress-location-finder__near:focus-visible,
+.wp-block-anypress-location-finder__pick:focus-visible { outline: 3px solid var(--wp--preset--color--primary, currentColor); outline-offset: 2px; }
+.wp-block-anypress-location-finder__status { margin: 0; font-size: var(--wp--preset--font-size--small, 0.9375rem); }
+.wp-block-anypress-location-finder__status:empty { display: none; }
+.wp-block-anypress-location-finder__list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	margin: 0;
+	padding: 0.25rem;
+	overflow-y: auto;
+	list-style: none;
+}
+.wp-block-anypress-location-finder__place {
+	margin: 0;
+	padding: 0.75rem 1rem;
+	border: 1px solid var(--wp--preset--color--border-light, rgb(0 0 0 / 0.15));
+	border-radius: var(--wp--custom--radius--medium, 8px);
+}
+.wp-block-anypress-location-finder__place[hidden] { display: none; }
+.wp-block-anypress-location-finder__place.is-current { border-color: var(--wp--preset--color--primary, currentColor); box-shadow: inset 4px 0 0 var(--wp--preset--color--primary, currentColor); }
+.wp-block-anypress-location-finder__pick {
+	display: grid;
+	gap: 0.15rem;
+	width: 100%;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	text-align: start;
+	cursor: pointer;
+}
+.wp-block-anypress-location-finder__distance { font-size: var(--wp--preset--font-size--small, 0.9375rem); font-weight: 600; }
+.wp-block-anypress-location-finder__distance:empty { display: none; }
+.wp-block-anypress-location-finder__hours { margin: 0.35rem 0 0; font-size: var(--wp--preset--font-size--small, 0.9375rem); }
+.wp-block-anypress-location-finder__links { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; margin: 0.35rem 0 0; }
+.wp-block-anypress-location-finder__links a { display: inline-block; padding-block: 0.4rem; }
+.wp-block-anypress-location-finder__map {
+	position: relative;
+	min-height: 24rem;
+	overflow: hidden;
+	border-radius: var(--wp--custom--radius--medium, 8px);
+	background: color-mix(in srgb, currentColor 8%, transparent);
+}
+.wp-block-anypress-location-finder__map iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+@media (max-width: 781px) {
+	.wp-block-anypress-location-finder { grid-template-columns: minmax(0, 1fr); }
+	.wp-block-anypress-location-finder__map { order: -1; min-height: 0; aspect-ratio: 4/3; }
+	.wp-block-anypress-location-finder__panel { max-height: none; }
+	.wp-block-anypress-location-finder__list { overflow: visible; }
+}

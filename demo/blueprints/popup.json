@@ -1,0 +1,137 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"meta": {
+		"title": "AnyPress Blocks demo: Popup",
+		"author": "hamchowderr",
+		"description": "The Popup block from AnyPress Blocks, working on a page of the AnyPress theme, with the latest releases."
+	},
+	"landingPage": "/blocks/popup/",
+	"preferredVersions": {
+		"php": "8.3",
+		"wp": "latest"
+	},
+	"steps": [
+		{
+			"step": "login"
+		},
+		{
+			"step": "installTheme",
+			"themeData": {
+				"resource": "url",
+				"url": "https://api.anypress.io/branding/demo-files/anypress-theme.zip"
+			},
+			"options": {
+				"activate": true,
+				"targetFolderName": "anypress"
+			},
+			"progress": {
+				"caption": "Setting up the design"
+			}
+		},
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "url",
+				"url": "https://api.anypress.io/branding/demo-files/anypress-blocks.zip"
+			},
+			"options": {
+				"activate": true,
+				"targetFolderName": "anypress-blocks"
+			},
+			"progress": {
+				"caption": "Adding AnyPress Blocks"
+			}
+		},
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "wordpress.org/plugins",
+				"slug": "fluentform"
+			},
+			"options": {
+				"activate": true
+			},
+			"progress": {
+				"caption": "Adding the forms"
+			}
+		},
+		{
+			"step": "mkdir",
+			"path": "/wordpress/wp-content/anypress-blocks-demo"
+		},
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/anypress-blocks-demo/build.php",
+			"data": {
+				"resource": "url",
+				"url": "https://raw.githubusercontent.com/hamchowderr/anypress-blocks/main/demo/build.php"
+			},
+			"progress": {
+				"caption": "Writing the example pages"
+			}
+		},
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/anypress-blocks-demo/path-before.jpg",
+			"data": {
+				"resource": "url",
+				"url": "https://raw.githubusercontent.com/hamchowderr/anypress-blocks/main/demo/path-before.jpg"
+			},
+			"progress": {
+				"caption": "Writing the example pages"
+			}
+		},
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/anypress-blocks-demo/path-after.jpg",
+			"data": {
+				"resource": "url",
+				"url": "https://raw.githubusercontent.com/hamchowderr/anypress-blocks/main/demo/path-after.jpg"
+			},
+			"progress": {
+				"caption": "Writing the example pages"
+			}
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php require '/wordpress/wp-load.php'; require WP_CONTENT_DIR . '/anypress-blocks-demo/build.php';",
+			"progress": {
+				"caption": "Building the example pages"
+			}
+		},
+		{
+			"step": "mkdir",
+			"path": "/wordpress/wp-content/plugins/anypress-client-data"
+		},
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/plugins/anypress-client-data/roles.json",
+			"data": {
+				"resource": "url",
+				"url": "https://raw.githubusercontent.com/hamchowderr/waas-provisioning-api/main/templates/anypress-store/roles.json"
+			},
+			"progress": {
+				"caption": "Setting up wp-admin"
+			}
+		},
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/mu-plugins/0-anypress-store-env.php",
+			"data": "<?php putenv('ANYPRESS_IS_TENANT=true'); define('ANYPRESS_TENANT_ROLES', 'website');"
+		},
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "url",
+				"url": "https://api.anypress.io/branding/demo-files/anypress-client.zip"
+			},
+			"options": {
+				"activate": true,
+				"targetFolderName": "anypress-client"
+			},
+			"progress": {
+				"caption": "Setting up wp-admin"
+			}
+		}
+	]
+}
